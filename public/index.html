@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta content="width=device-width, initial-scale=1" name="viewport" />
+		<title>🌌 SPACEBOOK 🌌</title>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+			integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+			crossorigin="anonymous"
+		/>
+		<link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
+	</head>
+	<body>
+		<header></header>
+		<main>
+
+			<!-- LOGIN PAGE -->
+			<div id="login-page" class="pt-5">
+				<div id="login-page-header"></div>
+				<div id="login-page-main">
+					<div class="container d-flex justify-content-center mx-auto pt-5">
+						<div class="card card-login w-75 h-100 mt-5 text-center text-white">
+							<div class="card-header">
+								<h1 class="display-1 lead">SPACEBOOK</h1>
+								<h3 class="mb-2 display-6">Welcome to the NASA social network</h3>
+							</div>
+							<div class="card-body">
+								<form class="name-form" method="post">
+									<div class="form-group mx-auto col-8">
+										<label for="username" class="form-label">USER NAME</label>
+										<input
+											type="text"
+											class="form-control mb-3 text-center"
+											id="username"
+											name="username"
+											placeholder="Enter your user name"
+										/>
+										<div id="error-message-login" class="invalid-feedback mb-3 d-none">
+											Required a valid name - letters and digits only!
+										</div>
+									</div>
+									<button id="loginFormSubmit" type="submit" class="btn btn-outline-light">Enter</button>
+								</form>
+							</div>
+							<div class="card-footer"></div>
+						</div>
+					</div>
+				</div>
+				<div id="login-page-footer"></div>
+			</div>
+
+			<!-- BOOK PAGE -->
+			<div id="book-page" class="mx-auto text-center container-fluid align-center pt-5 pb-5 d-none">
+				<div id="book-page-header" class="container w-75 text-white">
+					<h1 class="display-1 text-center">SPACEBOOK</h1>
+					<span class="text-justify"
+						>Welcome to SPACEBOOK, the NASA social network!<br />
+						On our website, you can explore the latest images and videos from NASA missions and discover the wonders of the universe. Each day, we
+						upload a new image for you to enjoy and share your thoughts on. <br />
+						You can also use our calendar feature to travel back in time and see the images that NASA uploaded on a specific date. Whether you are a
+						space enthusiast or just looking for some inspiration, SPACEBOOK has something for everyone. <br />
+						Thank you for joining us on this journey of discovery. We can't wait to see what you'll discover next.
+					</span>
+
+					<form class="form-group mt-4 mb-5">
+						<div class="row">
+							<label for="chooseDate" class="col-form-label">Choose the end-date to load image:</label>
+							<div class="col-9 col-sm-7 col-lg-5 mx-auto">
+								<input type="date" class="form-control datepicker text-primary text-center" id="chooseDate" value="2022-12-25" />
+							</div>
+						</div>
+						<button id="dateFormSubmit" type="submit" class="btn btn-outline-light mt-2">update</button>
+						<div id="error-message-date" class="text-danger d-none text-center display-6">Wrong day chosen!</div>
+					</form>
+				</div>
+				<div id="book-page-main" class="container-fluid"></div>
+				<div id="book-page-footer">
+					<button type="button" class="btn btn-outline-light" id="more"> LOAD MORE </button>
+					<div class="text-center text-danger d-none" id="scrollEnd">NO MORE IMAGES TO LOAD!</div>
+				</div>
+				<div id="modalComments">
+					<!-- The Modal -->
+					<div
+						class="modal fade"
+						id="myModal"
+						data-bs-backdrop="static"
+						data-bs-keyboard="false"
+						tabindex="-1"
+						aria-labelledby="staticBackdropLabel"
+						aria-hidden="true"
+					>
+						<div class="modal-dialog modal-dialog-scrollable ml-auto">
+							<div class="modal-content">
+								<!-- Modal Header -->
+								<div class="modal-header text-center">
+									<h4 id="comment-title">IMG TITLE</h4>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" id="btnModalclose1"></button>
+								</div>
+								<!-- Modal body -->
+								<div class="modal-body">
+									<div class="row d-flex justify-content-center">
+										<div class="col">
+											<div class="card shadow-0 border" style="background-color: #f0f2f5">
+												<div class="card-body p-4">
+													<div class="form-outline mb-4">
+														<textarea type="text" id="addANote" class="form-control" placeholder="Type comment..." rows="3"></textarea>
+														<label class="form-label" for="addANote">+ press enter to post </label>
+														<div id="commentErr" class="text-danger mb-3"></div>
+													</div>
+													<div id="comments"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- Modal footer -->
+								<div class="modal-footer">
+									<button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" id="btnModalclose2">Close</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<footer></footer>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+			crossorigin="anonymous"
+		></script>
+		<script src="javascripts/ex5.js"></script>
+	</body>
+</html>
