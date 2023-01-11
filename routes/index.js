@@ -29,6 +29,8 @@ router.post('/', (req, res) => {
     res.render('register-passwords', {title: 'register passwords', error: "passwords do not match" });
   }
 
+  //update userData
+
   // Passwords match, render the "/" page
   res.render('/', {title: 'Login' });
 });
