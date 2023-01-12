@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title><%= title %></title>
-    <link rel='stylesheet' href='../public/stylesheets/style.css' />
+    <link rel='stylesheet' href='stylesheets/style.css' />
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
           integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
@@ -18,27 +18,33 @@
              alt="nasa image">
         <h1 class="display-5">Please register</h1>
         <div class="fs-3">register</div>
+        <% if (error) { %>
+            <div class="passwords-error-message text-danger mb-3 fs-6"> <%= error %>! <br> please try again </div>
+        <% } %>
     </div>
 </header>
 <main>
     <div class="container form-container text-center">
         <form action="/register-passwords" method="post">
             <div class="row mb-3 d-flex justify-content-center">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
+                <label for="userEmail" class="form-label">Email address</label>
                 <div class="col-md-5 text center">
-                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+                    <input type="email" class="form-control" id="userEmail" name="email" aria-describedby="emailHelp" required>
                 </div>
             </div>
             <div class="row mb-3 d-flex justify-content-center">
                 <div class="col-md-5">
-                    <label for="exampleInputPassword1" class="form-label">First name</label>
-                    <input type="text" class="form-control col-sm-3" id="exampleInputPassword1" pattern="[a-zA-Z]{3,32}" title="Only letters are allowed, max 32, min 3."required>
+                    <label for="userFirstName" class="form-label">First name</label>
+                    <input type="text" class="form-control col-sm-3" id="userFirstName" pattern="[a-zA-Z]{3,32}"
+                           name="firstName" title="Only letters are allowed, max 32, min 3."required
+                    oninvalid="this.set">
                 </div>
             </div>
             <div class="row mb-3 d-flex justify-content-center">
                 <div class="col-md-5">
-                    <label for="exampleInputPassword1" class="form-label">Last name</label>
-                    <input type="text" class="form-control col-sm-3" id="exampleInputPassword1" pattern="[a-zA-Z]{3,32}" title="Only letters are allowed, max 32, min 3." required>
+                    <label for="userLastName" class="form-label">Last name</label>
+                    <input type="text" class="form-control col-sm-3" id="userLastName" pattern="[a-zA-Z]{3,32}"
+                           name="lastName" title="Only letters are allowed, max 32, min 3." required>
                 </div>
             </div>
             <div class="d-grid col-md-5 mx-auto">
@@ -53,6 +59,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
         crossorigin="anonymous"></script>
-<script src="../public/javascripts/ex6.js"></script>
+<script src="javascripts/ex6.js"></script>
 </body>
 </html>

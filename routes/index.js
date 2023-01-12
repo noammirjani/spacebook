@@ -1,56 +1,57 @@
 const express = require('express');
-//const Cookies = require('cookies')
+const Cookies = require('cookies');
 const router = express.Router();
 
-// Optionally define keys to sign cookie values
-// to prevent client tampering
-//const keys = ['keyboard cat']
+const User = require('../models/user.js');
+const db = require("../models/usersList.js");
+
+const keys = ['key']
 
 /* GET */
-router.get('/', function(req, res, next) {
-  res.render('login', { title: 'Login' });
+router.get('/', (req, res) => {
+  res.render('login', { title: 'Login', newRegistered : "" });
 });
 
-router.get('/register', function(req, res, next) {
-  res.render('register', { title: 'register' });
+router.get('/register', (req, res) => {
+  res.render('register', { title: 'register', error: "" });
 });
 
-router.get('/register-passwords', function(req, res, next) {
+router.get('/register-passwords', (req, res) => {
+  const cookies = new Cookies(req, res);
+  const cookieData = cookies.get("newUser");
+  if (!cookieData) {
+    res.redirect('/register');
+    return;
+  }
   res.render('register-passwords', { title: 'register passwords', error: undefined});
 });
 
 /* POST */
 router.post('/', (req, res) => {
-  const password = req.body.password;
-  const confirmPassword = req.body.confirmPassword;
-
+  const {password, confirmPassword} = req.body;
   if (password !== confirmPassword) {
-    // Passwords do not match, refresh the page or display an error message
-    res.render('register-passwords', {title: 'register passwords', error: "passwords do not match" });
+    res.render('register-passwords', {title: 'register-passwords', error: "passwords do not match" });
+    return;
   }
 
-  //update userData
+  const cookies = new Cookies(req, res);
+  const prevData = JSON.parse(cookies.get("newUser"));
+  const user = new User(prevData.email, prevData.firstName, prevData.lastName, password);
 
-  // Passwords match, render the "/" page
-  res.render('/', {title: 'Login' });
+  db.enterUser(user);
+  res.render('login', {title: 'Login' , newRegistered : "you are registered"});
+});
+
+router.post('/register-passwords', (req, res) => {
+  const cookies = new Cookies(req, res);
+  const {email, firstName, lastName} = req.body;
+  if (db.isNewUser(email)) {
+    const data = { email, firstName, lastName };
+    cookies.set("newUser", JSON.stringify(data), { maxAge: 30*1000 });
+    res.render('register-passwords', { title: 'register passwords', error: undefined });
+  } else {
+    res.render('register', { title: 'register', error: 'Email already in use'});
+  }
 });
 
 module.exports = router;
-
-
-
-
-// router.get('/', function (req, res) {
-//   const cookies = new Cookies(req, res, { keys: keys })
-//
-//   // Get the cookie
-//   const lastVisit = cookies.get('LastVisit', { signed: true })
-//
-//   if (!lastVisit) {
-//     // Set the cookie with expiration time 10 seconds (for testing)
-//     cookies.set('LastVisit', new Date().toISOString(), { signed: true, maxAge: 10*1000 });
-//     res.render('firstvisit', {title: 'Firt visit with cookie', firstvisit: true});
-//   }
-//   else
-//     res.render('firstvisit', { title: 'Firt visit with cookie', firstvisit: false });
-// });
