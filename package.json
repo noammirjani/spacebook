@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "make-model" : "npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string",
+    "mingrate" : "npx sequelize-cli db:migrate",
+    "undo" : "npx sequelize-cli db:migrate:undo",
     "start": "node ./bin/www"
   },
   "dependencies": {
