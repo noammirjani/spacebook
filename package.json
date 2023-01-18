@@ -3,12 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "make-model" : "npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string",
-    "mingrate" : "npx sequelize-cli db:migrate",
-    "undo" : "npx sequelize-cli db:migrate:undo",
+    "make-model": "npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string",
+    "mingrate": "npx sequelize-cli db:migrate",
+    "undo": "npx sequelize-cli db:migrate:undo",
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "cookie-parser": "~1.4.4",
     "cookies": "^0.8.0",
