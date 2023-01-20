@@ -1,29 +1,29 @@
 <%- include('includes/head.ejs') %>
 <body>
   <header>
-    <div class="text-center mb-5">
+    <div class="text-center mb-3">
       <img src="https://www.nasa.gov/sites/default/files/thumbnails/image/nasa-logo-web-rgb.png"
            class="nasa-icon mx-auto d-block"
            alt="nasa image">
      <h1 class="display-5">Please sign in</h1>
       <% if (newRegistered) { %>
-        <div class="passwords-error-message text-danger mb-3 fs-6"> <%= newRegistered %>!  </div>
+        <div class="passwords-error-message text-danger fs-6"> <%= newRegistered %>!  </div>
       <% } %>
     </div>
   </header>
   <main>
     <div class="container form-container text-center mb-5">
-      <form>
+      <form action="/api" method="post">
         <div class="row mb-3 d-flex justify-content-center">
           <label for="email-user" class="form-label">Email address</label>
           <div class="col-md-5 text center">
-            <input type="email" class="form-control" id="email-user" autocomplete="username" aria-describedby="emailHelp">
+            <input name="email" type="email" class="form-control" id="email-user" autocomplete="username" aria-describedby="emailHelp" required>
           </div>
         </div>
         <div class="row mb-3 d-flex justify-content-center">
           <div class="col-md-5">
             <label for="password-user" class="form-label">Password</label>
-            <input type="password" class="form-control col-sm-3" id="password-user" autocomplete="current-password">
+            <input name="password" type="password" class="form-control col-sm-3" id="password-user" autocomplete="current-password" required>
           </div>
         </div>
         <div class="d-grid col-md-5 mx-auto">

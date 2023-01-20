@@ -14,4 +14,6 @@ router.post('/', userController.postLogin);
 
 router.post('/register-passwords', userController.postRegisterPasswords);
 
+router.post('/api', userController.tryLogIn);
+
 module.exports = router;

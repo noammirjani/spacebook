@@ -18,14 +18,14 @@
             <div class="row mb-3 d-flex justify-content-center">
                 <label for="userEmail" class="form-label">Email address</label>
                 <div class="col-md-5 text center">
-                    <input type="email" class="form-control" id="userEmail" name="email" aria-describedby="emailHelp" required>
+                    <input type="email" class="form-control" id="userEmail" name="email" aria-describedby="emailHelp"  value="<%= email || '' %>" required>
                 </div>
             </div>
             <div class="row mb-3 d-flex justify-content-center">
                 <div class="col-md-5">
                     <label for="userFirstName" class="form-label">First name</label>
                     <input type="text" class="form-control col-sm-3" id="userFirstName" pattern="[a-zA-Z]{3,32}"
-                           name="firstName" title="Only letters are allowed, max 32, min 3."required
+                           name="firstName" title="Only letters are allowed, max 32, min 3." value="<%= firstName || '' %>" required
                     oninvalid="this.set">
                 </div>
             </div>
@@ -33,7 +33,7 @@
                 <div class="col-md-5">
                     <label for="userLastName" class="form-label">Last name</label>
                     <input type="text" class="form-control col-sm-3" id="userLastName" pattern="[a-zA-Z]{3,32}"
-                           name="lastName" title="Only letters are allowed, max 32, min 3." required>
+                           name="lastName" title="Only letters are allowed, max 32, min 3." value="<%= lastName || '' %>" required>
                 </div>
             </div>
             <div class="d-grid col-md-5 mx-auto">
