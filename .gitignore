@@ -3,5 +3,6 @@
 /workspace.xml
 /node_modules
 /.idea
+database.sqlite3
 # Editor-based HTTP Client requests
 /httpRequests/
