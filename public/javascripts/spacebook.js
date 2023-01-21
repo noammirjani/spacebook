@@ -1,4 +1,5 @@
 (function () {
+    const APIKEY = "cosjA0DN7IKcSttpfkp0CmPqIUX8M3eOt88kQPBJ";
 
     const fetchHandlers = (function () {
         function checkResponse(response) {
@@ -26,6 +27,6 @@
     })();
 
     document.addEventListener("DOMContentLoaded", () => {
-        //2. check if the email already found in system -> no importance to capital letters
+
     });
 })();

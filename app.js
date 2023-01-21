@@ -6,7 +6,6 @@ var logger = require('morgan');
 var fs = require('fs')
 const session = require('express-session');
 
-
 var indexRouter = require('./routes/index');
 var app = express();
 
@@ -19,15 +18,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', indexRouter);
 
 
-//enable sessions
 app.use(session({
-  secret:"secret",
+  secret: 'key',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: true
 }));
+
+
+app.use('/', indexRouter);
+app.use('/login', indexRouter);
+
 
 
 // catch 404 and forward to error handler

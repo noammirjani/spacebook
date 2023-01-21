@@ -6,3 +6,50 @@
 .copyright{
     background-color: rgba(224, 219, 219, 0.44);
 }
+
+body {
+    /*background-image: url(../images/login-page-bg.jpg);*/
+    /*background-size: cover;*/
+    /*background-repeat: repeat;*/
+    /*background-attachment: fixed;*/
+    /*height: 100%;*/
+    background-color: rgba(189, 145, 145, 0.9) !important;
+}
+
+.card-login {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.card-img-header {
+    height: 20vh;
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-y: scroll;
+}
+
+.card-img-body {
+    height: 40vh;
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-y: scroll;
+}
+
+.card-img-footer {
+    height: 15vh;
+}
+.card-grid {
+    background-color: rgba(182, 236, 241, 0.68) !important;
+}
+
+.textImg {
+    background-color: rgba(194, 130, 194, 0.5) !important;
+}
+
+.col-img {
+    object-fit: cover;
+}
+
+.deleteComment {
+    height: 20px;
+    width: 20px;
+}
