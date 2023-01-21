@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "make-model": "npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string",
-    "mingrate": "npx sequelize-cli db:migrate",
+    "mingrate": "npx sequelize-cli db:migrate node_modules/.bin/sequelize db:migrate",
     "undo": "npx sequelize-cli db:migrate:undo",
     "start": "node ./bin/www"
   },

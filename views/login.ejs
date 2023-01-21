@@ -7,7 +7,10 @@
            alt="nasa image">
      <h1 class="display-5">Please sign in</h1>
       <% if (newRegistered) { %>
-        <div class="passwords-error-message text-danger fs-6"> <%= newRegistered %>!  </div>
+        <div class="passwords-error-message text-success fs-6"> <%= newRegistered %>!  </div>
+      <% } %>
+      <% if (error) { %>
+        <div class="passwords-error-message text-danger fs-6"> <%= error %>!  </div>
       <% } %>
     </div>
   </header>

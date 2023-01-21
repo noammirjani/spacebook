@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         email: {
             type: DataTypes.STRING,
-            //trim: true,
+            trim: true,
             unique: {args: true, msg: "Email already exists"}
         },
         password: {
@@ -51,6 +51,18 @@ module.exports = (sequelize, DataTypes) => {
      * and encrypts the user's password.
      */
     User.addHook('beforeCreate', 'beforeUpdate', encryptPassword);
+
+
+    /**
+     * displays the add product page that includes a form.
+     * @param req
+     * @param res
+     * @param next
+     */
+    sequelize.addHook('beforeValidate', (user) => {
+        user.firstName = user.firstName.toLowerCase();
+        user.lastName = user.lastName.toLowerCase();
+    });
 
     /**
      * Encrypt the user's password using bcrypt.
@@ -71,12 +83,5 @@ module.exports = (sequelize, DataTypes) => {
         if (!isMatch) throw new Error("Incorrect password");
     }
 
-
-
     return User;
 };
-
-// queryInterface.addIndex('User', ['email'], {
-//   indexName: 'email',
-//   indicesType: 'UNIQUE'
-// })

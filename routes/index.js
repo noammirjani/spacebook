@@ -1,19 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/user');
+const registerController = require('../controllers/register');
+const loginController = require('../controllers/login');
 
 /* GET */
-router.get('/', userController.getLoginPage);
+router.get('/', registerController.getLoginPage);
 
-router.get('/register', userController.getRegisterPage);
+router.get('/register', registerController.getRegisterPage);
 
-router.get('/register-passwords', userController.getRegisterPasswordsPage);
+router.get('/register-passwords', registerController.getRegisterPasswordsPage);
 
 /* POST */
-router.post('/', userController.postLoginPage);
+router.post('/', registerController.postLoginPage);
 
-router.post('/register-passwords', userController.postRegisterPasswords);
+router.post('/register-passwords', registerController.postRegisterPasswords);
 
-router.post('/api', userController.logIn);
+router.post('/api', registerController.logIn);
 
 module.exports = router;
