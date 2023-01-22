@@ -65,7 +65,6 @@
         }
 
         function checkPatternDates(startDate, endDate){
-
             const datePattern = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/;;
 
             function isValid(dateString){
@@ -324,7 +323,6 @@
         function getTitle(){
             return "All comments for: " + currImgDate.split("-").reverse().join("-");
         }
-
 
         return {
             closeCommentsModal : closeModal,

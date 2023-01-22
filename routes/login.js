@@ -2,23 +2,23 @@ const express = require('express');
 const router = express.Router();
 
 const loginController = require('../controllers/login');
-const { checkAccessGetRequest, checkAccessPostRequest } = require('./checkAccess');
+const access = require('../controllers/checkAccess');
 
 
 /* GET */
 router.get('/',
-    checkAccessGetRequest,
+    access.checkAccessGetRequest,
     loginController.getLoginPage);
 
 router.get('/login',
-    checkAccessGetRequest,
+    access.checkAccessGetRequest,
     loginController.getLoginPage);
 
 router.get('/home', loginController.getApp);
 
 /* POST */
-router.post('/', checkAccessPostRequest);
-router.post('/login', checkAccessPostRequest);
+router.post('/', access.checkAccessPostRequest);
+router.post('/login', access.checkAccessPostRequest);
 router.post('/home', loginController.enterHomePage);
 
 module.exports = router;

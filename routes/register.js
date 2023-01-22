@@ -2,15 +2,15 @@ const express = require('express');
 const router = express.Router();
 
 const registerController = require('../controllers/register');
-const {checkAccessGetRequest, checkAccessPostRequest} = require('./checkAccess');
+const access = require('../controllers/checkAccess');
 
 /* GET */
 router.get('/register',
-    checkAccessGetRequest,
+    access.checkAccessGetRequest,
     registerController.getRegisterPage);
 
 router.get('/register-passwords',
-    checkAccessGetRequest,
+    access.checkAccessGetRequest,
     registerController.getRegisterPasswordsPage);
 
 
