@@ -1,12 +1,12 @@
 const db = require('../models');
+const cookies = require('./cookies');
 const Sequelize = require('sequelize');
 
 //const variables
-const COOKIE_NAME = "newUser";
-const COOKIE_MAX_AGE = 30 * 1000;
 const COOKIE_ERROR = 'error';
 const COOKIE_REGISTER = 'register';
-
+const COOKIE_USER = 'newUser';
+const COOKIE_MAX_AGE = 30 * 1000;
 
 /**
  * getRegister - handle the get request for the register page.
@@ -15,7 +15,7 @@ const COOKIE_REGISTER = 'register';
  */
 exports.getRegisterPage = (req, res) => {
     try {
-        const data = getCookieData(req);
+        const data = cookies.getCookieData(req, COOKIE_USER);
         renderRegister(req, res, data);
     }
     catch{
@@ -31,7 +31,7 @@ exports.getRegisterPage = (req, res) => {
  */
 exports.getRegisterPasswordsPage = (req, res) => {
     try {
-        getCookieData(req);
+        cookies.getCookieData(req, COOKIE_USER);
         renderRegisterPasswords(req, res);
     }
     catch{
@@ -56,7 +56,6 @@ exports.postLoginPage = (req, res) => {
     }
 };
 
-
 /**
  * postRegisterPasswords - handle the post request for the register-passwords page.
  * @param {Object} req - Express request object
@@ -78,7 +77,6 @@ exports.postRegisterPasswords = async (req, res) => {
     }
 };
 
-
 /**
  * setNewUserCookie - sets a new user cookie with the provided data
  * @param {Object} req - Express request object
@@ -86,22 +84,9 @@ exports.postRegisterPasswords = async (req, res) => {
  * @param {Object} data - the data to be stored in the cookie
  */
 const setNewUserCookie = (req, res, data) => {
-    res.cookie(COOKIE_NAME, JSON.stringify(data), { maxAge: COOKIE_MAX_AGE });
+    res.cookie(COOKIE_USER, JSON.stringify(data), { maxAge: COOKIE_MAX_AGE });
     renderRegisterPasswords(req, res);
 }
-
-
-/**
- * getCookieData - gets the data stored in the user cookie as string
- * @param {Object} req - Express request object
- * @returns {Object} the data stored in the cookie
- */
-const getCookieData = (req) => {
-    const cookie = req.cookies[COOKIE_NAME];
-    if(cookie) return JSON.parse(cookie);
-    throw new Error("your time expired")
-}
-
 
 /**
  * createUser - enters a new user to the database
@@ -115,16 +100,14 @@ const createUser = async (firstName, lastName, email, password, res) => {
     try {
         await db.User.create({ firstName, lastName, email, password});
         res.cookie(COOKIE_REGISTER, "New user was registered successfully!");
-        res.clearCookie(COOKIE_NAME);
-    } catch (error) {
-        if (error instanceof Sequelize.ValidationError) {
+        res.clearCookie(COOKIE_USER);
+    }
+    catch (error) {
+        if (error instanceof Sequelize.ValidationError)
             throw error;
-        } else {
-            res.render('error', {error: error});
-        }
+        else res.render('error', {error: error.msg});
     }
 }
-
 
 /**
  * registerUser - registers a new user
@@ -134,7 +117,7 @@ const createUser = async (firstName, lastName, email, password, res) => {
  */
 const registerUser = async (password, req, res) => {
     try{
-        const {email, firstName, lastName} = getCookieData(req);
+        const {email, firstName, lastName} = cookies.getCookieData(req, COOKIE_USER);
         await createUser(firstName, lastName, email, password, res);
         res.redirect('/');
     }
@@ -142,18 +125,6 @@ const registerUser = async (password, req, res) => {
         res.cookie(COOKIE_ERROR, error.message);
         res.redirect('/register');
     }
-}
-
-/**
- * getCookieText - gets the text from the cookie, clears it and return the data.
- * @param {Object} res - Express response object
- * @param {Object} req - Express response object
- * @param {string} key - the cookie key
- */
-function getCookieText(req, res, key){
-    const text = req.cookies[key];
-    if (text) res.clearCookie(key);
-    return text;
 }
 
 
@@ -165,11 +136,9 @@ function getCookieText(req, res, key){
  * @param {User} userObj - User object
  */
 function renderRegister(req, res, userObj=undefined){
-
     const {email, firstName, lastName} = userObj || {undefined,undefined,undefined}
-    res.render('register', {title:'register', error:getCookieText(req,res,COOKIE_ERROR), email, firstName, lastName});
+    res.render('register', {title:'register', error:cookies.getCookieText(req,res,COOKIE_ERROR), email, firstName, lastName});
 }
-
 
 /**
  * renderRegisterPasswords - displays the register-passwords page.
@@ -177,5 +146,5 @@ function renderRegister(req, res, userObj=undefined){
  * @param {Object} req - Express response object
  */
 function renderRegisterPasswords(req, res){
-    res.render('register-passwords', {title: 'register-passwords', error:getCookieText(req,res,COOKIE_ERROR)});
+    res.render('register-passwords', {title: 'register-passwords', error:cookies.getCookieText(req,res,COOKIE_ERROR)});
 }

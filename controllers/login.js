@@ -1,8 +1,8 @@
 const db = require("../models");
+const cookies = require('./cookies');
 
 const COOKIE_ERROR = 'error';
 const COOKIE_REGISTER = 'register';
-
 
 /**
  * getLogin - handle the get request for the login page.
@@ -13,16 +13,11 @@ exports.getLoginPage = (req, res) => {
     renderLogin(req, res);
 }
 
-
 exports.postLoginPage = (req, res) => {
-    if(req.session.isLoggedIn) {
-        delete req.session.isLoggedIn;
-        req.session.save();
-        res.redirect('/')
-    }
-    else return undefined;
+    delete req.session.isLoggedIn;
+    req.session.save();
+    res.redirect('/')
 }
-
 
 /**
  * getLogin - handle the get request for the login page.
@@ -38,15 +33,22 @@ exports.getApp = (req, res) => {
     }
 }
 
-
+/**
+ * updateSessionData - update the Session data
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} user - User object
+ */
 function updateSessionData(req, res, user) {
     req.session.userName = user.firstName + ' ' + user.lastName;
     req.session.email = user.email;
     req.session.isLoggedIn = true;
 }
 
+// exports.enterApp = (req, res) => {
+//     renderApp(req,res);
+// }
 
-//POST LOGIN
 /**
  * enterHomePage - logs in a user and renders the api page
  * @param {Object} req - Express request object
@@ -54,14 +56,14 @@ function updateSessionData(req, res, user) {
  */
 exports.enterHomePage = async (req, res) => {
     let {email, password} = req.body;
+    email = email.toLowerCase();
 
     try {
-        email = email.toLowerCase();
         const user = await db.User.findOne({where: {email}});
         if(!user) throw new Error("email is not found, please register")
         user.comparePasswords(password);
         updateSessionData(req,res,user);
-        res.redirect('/home');;
+        res.redirect('/home');
     }
     catch(error){
         res.cookie(COOKIE_ERROR, error.message);
@@ -69,34 +71,15 @@ exports.enterHomePage = async (req, res) => {
     }
 }
 
-
-exports.enterApp = (req, res) => {
-    renderApp(req,res);
-}
-
-
-/**
- * getCookieText - gets the text from the cookie, clears it and return the data.
- * @param {Object} res - Express response object
- * @param {Object} req - Express response object
- * @param {string} key - the cookie key
- */
-function getCookieText(req, res, key){
-    const text = req.cookies[key];
-    if (text) res.clearCookie(key);
-    return text;
-}
-
-
 //--- RENDER FUNCTIONS ----//
 /**
  * renderApp - renders the api page
+ * @param req
  * @param {Object} res - Express response object
  */
 function renderApp(req,res){
     res.render("home", {title: 'api', name:req.session.userName, email:req.session.email})
 }
-
 
 /**
  * renderLogin - displays the login page.
@@ -106,6 +89,6 @@ function renderApp(req,res){
 function renderLogin(req, res){
     res.render('login', {
         title: 'Login',
-        error: getCookieText(req,res,COOKIE_ERROR) || "",
-        newRegistered: getCookieText(req,res,COOKIE_REGISTER) || ""});
+        error: cookies.getCookieText(req,res,COOKIE_ERROR) || "",
+        newRegistered: cookies.getCookieText(req,res,COOKIE_REGISTER) || ""});
 }
