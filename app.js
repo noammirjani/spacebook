@@ -1,15 +1,16 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var fs = require('fs')
+let createError = require('http-errors');
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
+let fs = require('fs')
 const session = require('express-session');
 
-var registerRouter = require('./routes/register'); //register
-var loginRouter = require('./routes/login');       //login
+let registerRouter = require('./routes/register'); //register
+let loginRouter = require('./routes/login');       //login
+let commentsRouter = require('./routes/comments'); //comments
 
-var app = express();
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,6 +32,7 @@ app.use(session({
 
 app.use(loginRouter);
 app.use(registerRouter);
+app.use(commentsRouter);
 
 
 

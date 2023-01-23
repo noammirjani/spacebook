@@ -13,8 +13,8 @@
                         <img src="images/user.jpg" alt="mdo" width="50" height="50" class="rounded-circle">
                     </a>
                     <ul class="dropdown-menu text-small text-center" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0.5px, 34px, 0px);" data-popper-placement="bottom-end">
-                        <li class="dropdown-item"> <%= name %></li>
-                        <li class="dropdown-item"> <%= email %></li>
+                        <li class="dropdown-item" id="userName"> <%= name %></li>
+                        <li class="dropdown-item" id="userEmail"> <%= email %></li>
                     </ul>
                 </div>
             </ul>
@@ -53,18 +53,16 @@
         <div id="book-page-footer">
             <button type="button" class="btn btn-outline-light" id="more"> LOAD MORE </button>
             <div class="text-center text-danger d-none" id="scrollEnd">NO MORE IMAGES TO LOAD!</div>
+            <div class="d-flex justify-content-center d-none" id="loading">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
         </div>
     </div>
     <!-- COMMENTS MODAL -->
     <div id="modalComments">
-        <div class="modal fade"
-             id="myModal"
-             data-bs-backdrop="static"
-             data-bs-keyboard="false"
-             tabindex="-1"
-             aria-labelledby="staticBackdropLabel"
-             aria-hidden="true"
-        >
+        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable ml-auto text-center">
                 <div class="modal-content rounded-3 shadow">
                     <div class="modal-header p-4">
@@ -82,6 +80,9 @@
                                             <div id="commentErr" class="text-danger mb-3"></div>
                                         </div>
                                         <div id="comments"></div>
+                                        <div id="modalLoading" class="spinner-border text-success d-none" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

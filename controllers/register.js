@@ -65,8 +65,7 @@ exports.postRegisterPasswords = async (req, res) => {
     let {email, firstName, lastName} = req.body;
 
     try {
-        email = email.toLowerCase();
-        const emailExists = await db.User.findOne({where: { email } });
+        const emailExists = await db.User.findOne({where: { email:email.toLowerCase() } });
 
         if (emailExists) throw new Error('Email already in use');
         else setNewUserCookie(req, res, {email, firstName, lastName});
@@ -98,7 +97,7 @@ const setNewUserCookie = (req, res, data) => {
  */
 const createUser = async (firstName, lastName, email, password, res) => {
     try {
-        await db.User.create({ firstName, lastName, email, password});
+        await db.User.create({ firstName, lastName, email, password });
         res.cookie(COOKIE_REGISTER, "New user was registered successfully!");
         res.clearCookie(COOKIE_USER);
     }
@@ -117,7 +116,7 @@ const createUser = async (firstName, lastName, email, password, res) => {
  */
 const registerUser = async (password, req, res) => {
     try{
-        const {email, firstName, lastName} = cookies.getCookieData(req, COOKIE_USER);
+        let {email, firstName, lastName} = cookies.getCookieData(req, COOKIE_USER);
         await createUser(firstName, lastName, email, password, res);
         res.redirect('/');
     }

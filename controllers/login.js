@@ -43,6 +43,7 @@ function updateSessionData(req, res, user) {
     req.session.userName = user.firstName + ' ' + user.lastName;
     req.session.email = user.email;
     req.session.isLoggedIn = true;
+    req.session.save();
 }
 
 // exports.enterApp = (req, res) => {

@@ -36,6 +36,7 @@ body {
 
 .card-img-footer {
     height: 20vh;
+    overflow:auto;
 }
 .card-grid {
     background-color: rgba(182, 236, 241, 0.68) !important;

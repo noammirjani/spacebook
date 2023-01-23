@@ -3,6 +3,7 @@
 
     const fetchHandlers = (function () {
         function checkResponse(response) {
+
             if (response.status >= 200 && response.status < 300) {
                 return Promise.resolve(response);
             } else {
@@ -20,7 +21,8 @@
             comments.closeCommentsModal();
             selectors.dateErrorMsg.innerHTML = `Looks like there was a problem. <br> Status Code: ${error}`;
             selectors.dateErrorMsg.classList.remove("d-none");
-            utils.deleteChildren("book-page-main");
+            document.getElementById("book-page-main").innerHTML = ""
+            selectors.scrollButton.classList.add("d-none");
         }
 
         function handleErrorScroll() {
@@ -28,15 +30,38 @@
             selectors.endOfScroll.classList.remove("d-none");
         }
 
+        function startSpiner(){
+            selectors.scrollButton.classList.add("d-none");
+            selectors.loadingSpiner.classList.remove("d-none");
+        }
+
+        function stopSpiner(){
+           selectors.scrollButton.classList.remove("d-none");
+           selectors.loadingSpiner.classList.add("d-none");
+        }
+
+        function initCommentFetch(dateStr) {
+            selectors.comments.innerHTML = "";
+
+            if (!date.valid(dateStr))
+                fetchHandlers.handleErrorLoad("date pattern is not valid")
+
+            selectors.modalSpiner.classList.remove("d-none");
+        }
+
         return {
             checkResponse: checkResponse,
             getJson: getJson,
             handleErrorLoad: handleErrorLoad,
             handleErrorScroll : handleErrorScroll,
+            startSpiner: startSpiner,
+            stopSpiner:stopSpiner,
+            initCommentFetch: initCommentFetch,
         };
     })();
 
     const date = (function () {
+        const datePattern = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/;
 
         function getTodayDate() {
             // Get the  current date, year, month, and day as separate values
@@ -65,21 +90,21 @@
         }
 
         function checkPatternDates(startDate, endDate){
-            const datePattern = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/;;
-
-            function isValid(dateString){
-                return datePattern.test(dateString);
-            }
 
             if(!isValid(startDate) || !isValid(endDate)){
                 fetchHandlers.handleErrorLoad("date pattern is not valid, <br> enter new date type 'YYYY-MM-DD'");
             }
         }
 
+        function isValid(date){
+            return datePattern.test(date);
+        }
+
         return {
             today: getTodayDate,
             prev: calcPrevDate,
             check: checkPatternDates,
+            valid: isValid,
         };
     })();
 
@@ -96,11 +121,16 @@
         function loadData(endDate, scrollMode = false) {
             const startDate = date.prev(endDate, maxImagesForPage-1);
 
+            fetchHandlers.startSpiner();
+
             fetch(`https://api.nasa.gov/planetary/apod?api_key=${APIKEY}&start_date=${startDate}&end_date=${endDate}`)
                 .then(fetchHandlers.checkResponse)
                 .then(fetchHandlers.getJson)
                 .then((data) => {presentData(data, startDate);})
+                .then(fetchHandlers.stopSpiner)
                 .catch(function (error) {
+                    fetchHandlers.stopSpiner();
+
                     if (!scrollMode)
                         fetchHandlers.handleErrorLoad(error);
                     else
@@ -166,17 +196,6 @@
 
     })();
 
-    const utils = (function () {
-
-        function clearOldElementCards(parentId) {
-            document.getElementById(parentId).innerHTML = "";
-        }
-
-        return {
-            deleteChildren: clearOldElementCards,
-        };
-    })();
-
     const feedCreate = (function () {
         function createInnerGrid(){
             const colOutCard = document.createElement("div");
@@ -212,7 +231,7 @@
 
         function createCopyRight(copyright){
             const copyRight = document.createElement("div");
-            copyRight.classList.add("text-center", "text-muted");
+            copyRight.classList.add("text-center", "text-muted", "text-small");
             copyRight.innerHTML = copyright ? `Copyright &copy; ${copyright}` : '<br>';
             return copyRight;
         }
@@ -272,7 +291,7 @@
             cardBody.classList.add("card-body", "card-img-body");
             col.appendChild(cardBody);
             const cardFooter = document.createElement("div");
-            cardFooter.classList.add("card-footer", "card-img-footer");
+            cardFooter.classList.add("card-footer", "card-img-footer", "text-wrap", "container");
 
             col.appendChild(cardFooter);
             return {cardHeader, cardBody, cardFooter};
@@ -301,46 +320,225 @@
         };
     })();
 
+    const commentsCreate = (function (){
+        function createDeleteIcon(id, text, deleteFunc) {
+            const deleteImage = document.createElement("img");
+            deleteImage.src = "./images/delete.png";
+            deleteImage.alt = "delete image";
+            deleteImage.classList.add("image-fluid", "deleteComment");
+            deleteImage.addEventListener("click", () => deleteFunc(id, text));
+            return deleteImage;
+        }
+
+        function createGrid(){
+            const container = document.createElement("div");
+            container.classList.add("container");
+
+            const row = document.createElement("div");
+            row.classList.add("row");
+
+            container.appendChild(row);
+            return {container, row};
+        }
+
+        function createCols(row){
+            const col1 = document.createElement("div");
+            col1.classList.add("col-11");
+            row.appendChild(col1);
+
+            const col2 = document.createElement("div");
+            col2.classList.add("col-1", "d-flex", "align-items-center", "justify-content-center", "my-auto");
+            row.appendChild(col2);
+
+            return {col1, col2};
+        }
+
+        function createUserIcon(){
+            const avatar = document.createElement("img");
+            avatar.src = "images/user.jpg";
+            avatar.alt = "avatar";
+            avatar.style.width = "25px";
+            avatar.style.height = "25px";
+            return avatar;
+        }
+
+        function createUserNameText(name){
+            const username = document.createElement("p");
+            username.className = "small mb-0 ms-2 h6 text-primary";
+            username.textContent = name;
+            return username;
+        }
+
+        function createUserCommentText(txt){
+            const commentText = document.createElement("p");
+            commentText.className = "text-break px-2";
+            commentText.textContent = txt;
+            return commentText;
+        }
+
+        function createFlexCard(){
+            const card = document.createElement("div");
+            card.classList.add("card", "mb-1");
+            const cardBody = document.createElement("div");
+            cardBody.className = "card-body";
+
+            const justifyContentBetween = document.createElement("div");
+            justifyContentBetween.className = "justify-content-between";
+            const flexRow = document.createElement("div");
+            flexRow.className = "row align-items-center justify-content-center my-auto";
+
+            justifyContentBetween.appendChild(flexRow);
+            cardBody.appendChild(justifyContentBetween);
+            card.appendChild(cardBody);
+            return {flexRow, card};
+        }
+
+        function create3cols(flexRow){
+            const col1 = document.createElement("div");
+            col1.classList.add("col-1");
+            flexRow.appendChild(col1);
+
+            const col2 = document.createElement("div");
+            col2.classList.add("col-3");
+            flexRow.appendChild(col2);
+
+            const col3 = document.createElement("div");
+            col3.classList.add("col");
+            flexRow.appendChild(col3);
+            return {col1,col2,col3};
+        }
+
+        function commentCard(txt, name) {
+            const {flexRow, card} = createFlexCard();
+            const {col1,col2,col3} = create3cols(flexRow);
+
+            col1.appendChild(createUserIcon());
+            col2.appendChild(createUserNameText(name));
+            col3.appendChild(createUserCommentText(txt));
+
+            return card;
+        }
+
+        return {
+            deleteIcon: createDeleteIcon,
+            grid: createGrid,
+            card: commentCard,
+            cols: createCols,
+        };
+    })();
+
     const comments = (function () {
         let currImgDate = null;
-
         const maxChars = 128;
         const sendComment = 13;
 
         function closeModal(){
-            if (selectors.comments.getAttribute("aria-hidden") === "false") {
-                selectors.comments.setAttribute("aria-hidden", "true");
-            }
+            selectors.modalComments.setAttribute("aria-hidden", "true");
+            selectors.modalComments.setAttribute("data-bs-modal","hide");
+            selectors.modalSpiner.classList.add("d-none");
+            selectors.commentsErrorMsg.innerHTML = "Looks like there was a problem..."
         }
 
         function initClick(imgElement) {
             currImgDate = imgElement;
-            selectors.addANote.value = selectors.commentsErrorMsg.innerText = "";
+            selectors.commentTextBox.value = selectors.commentsErrorMsg.innerText = "";
             selectors.commentModalTitle.innerText =  getTitle();
-      //      getComments();
+            getDateComments();
         }
 
         function getTitle(){
             return "All comments for: " + currImgDate.split("-").reverse().join("-");
         }
 
+        function commentTyping(event) {
+            let comment = event.target.value;
+
+            if (event.keyCode === sendComment) {
+
+                if(comment.trim() === "") {
+                    selectors.commentsErrorMsg.innerText = "comment cant be empty!"
+                }
+                else if (comment.length >= maxChars) {
+                    selectors.commentsErrorMsg.innerText = "text can not be longer than 128 chars"
+                }
+                else {
+                    selectors.commentsErrorMsg.innerText = ""
+                    selectors.commentTextBox.value = "";
+                    commentsUpdate("/comments/", "POST",{date: currImgDate, text: comment});
+                }
+            }
+        }
+
+        function commentsUpdate(url, method, bodyData) {
+            fetchHandlers.initCommentFetch(currImgDate);
+
+            fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(bodyData),
+            })
+                .then(fetchHandlers.checkResponse)
+                .then(fetchHandlers.getJson)
+                .then(getDateComments)
+                .then(() => selectors.modalSpiner.classList.add("d-none"))
+                .catch((error) => fetchHandlers.handleErrorLoad(error));
+        }
+
+        function printComments(listComments) {
+            document.getElementById("comments").innerHTML = "";
+
+            let {container, row} = commentsCreate.grid();
+
+            listComments.forEach((comment) => {
+               const {col1, col2} = commentsCreate.cols(row);
+
+               col1.appendChild(commentsCreate.card(comment.text, selectors.userName));
+
+                if (comment.email === selectors.userEmail) {
+                    col2.appendChild(commentsCreate.deleteIcon(comment.id, comment.text, deleteComment));
+                }
+            });
+            selectors.comments.appendChild(container);
+        }
+
+        function getDateComments() {
+            fetchHandlers.initCommentFetch(currImgDate);
+
+            fetch(`/comments/${currImgDate}`)
+                .then(fetchHandlers.checkResponse)
+                .then(fetchHandlers.getJson)
+                .then((data) => printComments(data))
+                .then(() => selectors.modalSpiner.classList.add("d-none"))
+                .catch((error) => fetchHandlers.handleErrorLoad(error));
+        }
+
+        function deleteComment(id, text){
+            commentsUpdate("/comments/", "DELETE", {date: currImgDate, id, text});
+        }
+
         return {
             closeCommentsModal : closeModal,
             initModal: initClick,
+            type: commentTyping,
 
         };
     })();
 
     const selectors = {
         dateErrorMsg:   document.getElementById("error-message-date"),
+        loadingSpiner:  document.getElementById("loading"),
         scrollButton:   document.getElementById("more"),
         endOfScroll:    document.getElementById("scrollEnd"),
         selectDate:     document.getElementById("chooseDate"),
         mainContainer:  document.getElementById("book-page-main"),
-        addANote:       document.getElementById("addANote"),
+        commentTextBox: document.getElementById("addANote"),
         comments:       document.getElementById("comments"),
         commentsErrorMsg: document.getElementById("commentErr"),
         commentModalTitle:document.getElementById("comment-title"),
+        modalSpiner:    document.getElementById("modalLoading"),
+        modalComments:  document.getElementById("myModal"),
+        userName:       document.getElementById("userName").textContent.trim(),
+        userEmail:      document.getElementById("userEmail").textContent.trim(),
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -350,5 +548,7 @@
         document.getElementById("dateFormSubmit").addEventListener("click", bookPage.changeDate);
 
         document.getElementById("more").addEventListener("click", bookPage.handleScroll);
+
+        document.getElementById("addANote").addEventListener("keydown",  comments.type);
     });
 })();
