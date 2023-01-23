@@ -10,16 +10,20 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       firstName: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       lastName: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       email: {
+        allowNull: false,
         type: Sequelize.STRING,
         unique: {args: true, msg: "Email already exists"}
       },
       password: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       createdAt: {

@@ -10,16 +10,16 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       date: {
-        type: Sequelize.STRING,
         allowNull: false,
-      },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
+        type: Sequelize.STRING
       },
       text: {
-        type: Sequelize.STRING,
         allowNull: false,
+        type: Sequelize.STRING
+      },
+      email: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -27,6 +27,9 @@ module.exports = {
       },
       updatedAt: {
         allowNull: false,
+        type: Sequelize.DATE
+      },
+      deletedAt: {
         type: Sequelize.DATE
       }
     });

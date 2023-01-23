@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
     sequelize.addHook('beforeValidate', (user) => {
         // user.firstName = user.firstName.toLowerCase();
         // user.lastName = user.lastName.toLowerCase();
-         user.email = user.email.toLowerCase();
+        user.email = user.email.toLowerCase();
     });
 
     /**

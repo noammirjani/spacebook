@@ -34,9 +34,9 @@ exports.deleteComment = async(req, res) => {
 
         if(!comment) res.status(404).json("wanted comment to delete wasn't found");
 
-        if (comment.email!= req.session.email ||
-            comment.text != text ||
-            comment.date != date)
+        if (comment.email!== req.session.email ||
+            comment.text !== text ||
+            comment.date !== date)
             res.status(404).json("wanted comment to delete wasn't found");
 
         await comment.destroy();
