@@ -14,10 +14,10 @@ html,body{
 }
 
 .card{
-    height: 370px;
+    /* height: 500px; */
     margin-top: auto;
     margin-bottom: auto;
-    width: 400px;
+    width: 500px;
     background-color: rgba(0, 0, 0, 0.75) !important;
 }
 

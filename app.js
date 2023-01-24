@@ -33,6 +33,13 @@ app.use(session({
 }));
 
 
+function x(req,res,next){
+  console.log("request ", req);
+  next();
+}
+
+
+// /login /register /register-passwords  /comments /home
 app.use(access.nocache, access.checkLogout, loginRouter);
 app.use(access.nocache, access.checkLogout, registerRouter);
 app.use(access.nocache, access.checkLogin, commentsRouter);

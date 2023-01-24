@@ -4,6 +4,7 @@ exports.checkLogin = (req, res, next) => {
         next();
     else {
         if(!req.cookies.connect){
+            res.cookie("error","please sign in");
             res.redirect('/')
         }
         else{

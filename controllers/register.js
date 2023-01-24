@@ -30,14 +30,15 @@ exports.getRegisterPage = (req, res) => {
  * @param {Object} res - Express response object
  */
 exports.getRegisterPasswordsPage = (req, res) => {
-    try {
-        cookies.getCookieData(req, COOKIE_USER);
-        renderRegisterPasswords(req, res);
-    }
-    catch(error){
-        res.cookie(COOKIE_ERROR, error.message);
-        res.redirect('/register');
-    }
+    // try {
+        if(cookies.isCookieExists(req, COOKIE_USER))
+            renderRegisterPasswords(req, res);
+        else  {
+            if(cookies.isCookieExists(req, COOKIE_ERROR))
+                res.cookie(COOKIE_ERROR, 'your time expired')
+
+            res.redirect('/register');
+        }
 }
 
 /**

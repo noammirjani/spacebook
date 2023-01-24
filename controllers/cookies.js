@@ -22,3 +22,7 @@ exports.getCookieData = (req, cookieKey) => {
     if(cookie) return JSON.parse(cookie);
     throw new Error("your time expired")
 }
+
+exports.isCookieExists = (req, cookieKey) => {
+    return !!(req.cookies[cookieKey]);
+}

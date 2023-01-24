@@ -26,13 +26,8 @@ exports.getLoginPage = (req, res) => {
  * @param {Object} res - Express response object
  */
 exports.getApp = (req, res) => {
- 
-    //if(req.session.isLoggedIn)
-         renderApp(req, res);
-    // else{
-    //     res.cookie("error","please sign in");
-    //     res.redirect('/')
-    // }
+
+    renderApp(req, res);
 }
 
 /**
