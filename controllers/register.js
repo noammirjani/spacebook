@@ -34,7 +34,8 @@ exports.getRegisterPasswordsPage = (req, res) => {
         cookies.getCookieData(req, COOKIE_USER);
         renderRegisterPasswords(req, res);
     }
-    catch{
+    catch(error){
+        res.cookie(COOKIE_ERROR, error.message);
         res.redirect('/register');
     }
 }

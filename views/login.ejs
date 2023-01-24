@@ -1,46 +1,56 @@
 <%- include('includes/head.ejs') %>
+<link rel='stylesheet' href='stylesheets/loginStyle.css' />
+</head>
 <body>
-  <header>
-    <div class="text-center mb-3">
-      <img src="images/nasa-logo.png"
-           class="nasa-icon mx-auto d-block"
-           alt="nasa image">
-     <h1 class="display-5">Please sign in</h1>
-      <% if (newRegistered) { %>
-        <div class="passwords-error-message text-success fs-6"> <%= newRegistered %>!  </div>
-      <% } %>
-      <% if (error) { %>
-        <div class="passwords-error-message text-danger fs-6"> <%= error %>!  </div>
-      <% } %>
-    </div>
-  </header>
-  <main>
-    <div class="container form-container text-center mb-5">
-      <form action="/home" method="post">
-        <div class="row mb-3 d-flex justify-content-center">
-          <label for="email-user" class="form-label">Email address</label>
-          <div class="col-md-5 text center">
-            <input name="email" type="email" class="form-control" id="email-user" autocomplete="username" aria-describedby="emailHelp" required>
+<header>
+  <div class="text-center mb-3">
+  </div>
+</header>
+<main>
+  <div class="container">
+    <div class="d-flex justify-content-center h-100 position-absolute top-50 start-50 translate-middle">
+      <div class="card text-center">
+        <div class="card-header text-white">
+          <h1>SPACEBOOK</h1>
+          <h3>SIGN IN</h3>
+          <% if (newRegistered) { %>
+            <div class="passwords-error-message text-success fs-6"> <%= newRegistered %>!  </div>
+          <% } %>
+          <% if (error) { %>
+            <div class="passwords-error-message text-danger fs-6"> <%= error %>!  </div>
+          <% } %>
+        </div>
+        <div class="card-body">
+          <form action="/home" method="post">
+            <div class="form-group">
+              <div class="input-group">
+                <input name="email" type="email" class="form-control rounded-input text-center" id="email-user"
+                       autocomplete="username" aria-describedby="emailHelp" placeholder="user name" required>
+              </div>
+            </div>
+            <div class="form-group mt-2">
+              <div class="input-group">
+                <input name="password" type="password" class="form-control rounded-input col-sm-3 text-center"
+                       id="password-user" autocomplete="current-password" placeholder="password" required>
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <button class="btn btn-outline-warning" type="submit">Login</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer">
+          <div class="d-flex justify-content-center links text-white">
+            Don't have an account? <a href='/register' id="registerLink">REGISTER</a>
           </div>
         </div>
-        <div class="row mb-3 d-flex justify-content-center">
-          <div class="col-md-5">
-            <label for="password-user" class="form-label">Password</label>
-            <input name="password" type="password" class="form-control col-sm-3" id="password-user" autocomplete="current-password" required>
-          </div>
-        </div>
-        <div class="d-grid col-md-5 mx-auto">
-          <button type="submit" class="btn btn-primary">sign in</button>
-        </div>
-      </form>
-
-      <div class="mt-3"> need to <a href='/register' id="registerLink">register</a>?</div>
+      </div>
     </div>
-
-  </main>
-  <footer>
-    <div class="text-center p-4 fixed-bottom copyright">
-      © 2023 Copyright: NM
-    </div>
-  </footer>
+  </div>
+</main>
+<footer>
+  <div class="text-center p-4 fixed-bottom copyright text-white">
+    © 2023 Copyright: NM
+  </div>
+</footer>
 <%- include('includes/end.ejs') %>

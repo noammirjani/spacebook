@@ -30,32 +30,31 @@
             selectors.endOfScroll.classList.remove("d-none");
         }
 
-        function startSpiner(){
+        function startSpiner() {
             selectors.scrollButton.classList.add("d-none");
             selectors.loadingSpiner.classList.remove("d-none");
         }
 
-        function stopSpiner(){
-           selectors.scrollButton.classList.remove("d-none");
-           selectors.loadingSpiner.classList.add("d-none");
+        function stopSpiner() {
+            selectors.scrollButton.classList.remove("d-none");
+            selectors.loadingSpiner.classList.add("d-none");
         }
 
         function initCommentFetch(dateStr) {
-            selectors.comments.innerHTML = "";
 
             if (!date.valid(dateStr))
                 fetchHandlers.handleErrorLoad("date pattern is not valid")
 
-            selectors.modalSpiner.classList.remove("d-none");
+        //    selectors.modalSpiner.classList.remove("d-none");
         }
 
         return {
             checkResponse: checkResponse,
             getJson: getJson,
             handleErrorLoad: handleErrorLoad,
-            handleErrorScroll : handleErrorScroll,
+            handleErrorScroll: handleErrorScroll,
             startSpiner: startSpiner,
-            stopSpiner:stopSpiner,
+            stopSpiner: stopSpiner,
             initCommentFetch: initCommentFetch,
         };
     })();
@@ -89,14 +88,14 @@
             return [year, month, day].join("-");
         }
 
-        function checkPatternDates(startDate, endDate){
+        function checkPatternDates(startDate, endDate) {
 
-            if(!isValid(startDate) || !isValid(endDate)){
+            if (!isValid(startDate) || !isValid(endDate)) {
                 fetchHandlers.handleErrorLoad("date pattern is not valid, <br> enter new date type 'YYYY-MM-DD'");
             }
         }
 
-        function isValid(date){
+        function isValid(date) {
             return datePattern.test(date);
         }
 
@@ -118,24 +117,31 @@
             loadData(todayDate);
         }
 
+        function successLoad(data, startDate){
+            presentData(data, startDate);
+            fetchHandlers.stopSpiner();
+        }
+
+        function failedLoad(error, scrollMode) {
+            fetchHandlers.stopSpiner();
+
+            if (!scrollMode)
+                fetchHandlers.handleErrorLoad(error);
+            else
+                fetchHandlers.handleErrorScroll(error);
+        }
+
         function loadData(endDate, scrollMode = false) {
-            const startDate = date.prev(endDate, maxImagesForPage-1);
+            const startDate = date.prev(endDate, maxImagesForPage - 1);
 
             fetchHandlers.startSpiner();
 
             fetch(`https://api.nasa.gov/planetary/apod?api_key=${APIKEY}&start_date=${startDate}&end_date=${endDate}`)
                 .then(fetchHandlers.checkResponse)
                 .then(fetchHandlers.getJson)
-                .then((data) => {presentData(data, startDate);})
-                .then(fetchHandlers.stopSpiner)
-                .catch(function (error) {
-                    fetchHandlers.stopSpiner();
+                .then(successLoad)
+                .catch(failedLoad);
 
-                    if (!scrollMode)
-                        fetchHandlers.handleErrorLoad(error);
-                    else
-                        fetchHandlers.handleErrorScroll(error);
-                });
         }
 
         function presentData(responseData, startDate) {
@@ -151,7 +157,7 @@
             for (const imgData of Object.values(data).reverse()) {
                 const {colOutCard, col1, col2} = feedCreate.createInnerGrid();
 
-                if(imgData.media_type == "image")
+                if (imgData.media_type == "image")
                     col1.appendChild(feedCreate.createImage(imgData.url, imgData.date));
                 else col1.appendChild(feedCreate.createVideo(imgData.url));
 
@@ -197,7 +203,7 @@
     })();
 
     const feedCreate = (function () {
-        function createInnerGrid(){
+        function createInnerGrid() {
             const colOutCard = document.createElement("div");
             colOutCard.className = "col";
             const card = document.createElement("div");
@@ -211,32 +217,33 @@
 
             rowInCard.appendChild(col1);
             rowInCard.appendChild(col2);
-
             card.appendChild(rowInCard);
             colOutCard.appendChild(card);
 
             return {colOutCard, card, rowInCard, col1, col2};
         }
 
-        function commentTextBox(date){
+        function commentTextBox(date) {
             const cmdButton = document.createElement("button");
             cmdButton.className = "btn btn-outline-dark mr-2 cmdBtn";
             cmdButton.setAttribute("id", date);
             cmdButton.setAttribute("data-bs-toggle", "modal");
             cmdButton.setAttribute("data-bs-target", "#myModal");
             cmdButton.textContent = "comments";
-            cmdButton.addEventListener("click", function () { comments.initModal(date);});
+            cmdButton.addEventListener("click", function () {
+                comments.initModal(date);
+            });
             return cmdButton;
         }
 
-        function createCopyRight(copyright){
+        function createCopyRight(copyright) {
             const copyRight = document.createElement("div");
             copyRight.classList.add("text-center", "text-muted", "text-small");
             copyRight.innerHTML = copyright ? `Copyright &copy; ${copyright}` : '<br>';
             return copyRight;
         }
 
-        function createImage(url,date){
+        function createImage(url, date) {
             const img = document.createElement("img");
             img.className = "img-fluid col-img";
             img.src = url;
@@ -247,7 +254,7 @@
             return img;
         }
 
-        function createVideo(url){
+        function createVideo(url) {
             const ratio = document.createElement("div");
             ratio.setAttribute("class", "ratio ratio-1x1 col-img");
 
@@ -283,7 +290,7 @@
             return cardDate;
         }
 
-        function createDataGrid(col){
+        function createDataGrid(col) {
             const cardHeader = document.createElement("div");
             cardHeader.classList.add("card-header", "card-img-header");
             col.appendChild(cardHeader);
@@ -292,7 +299,6 @@
             col.appendChild(cardBody);
             const cardFooter = document.createElement("div");
             cardFooter.classList.add("card-footer", "card-img-footer", "text-wrap", "container");
-
             col.appendChild(cardFooter);
             return {cardHeader, cardBody, cardFooter};
         }
@@ -306,21 +312,21 @@
         }
 
         return {
-            commentTextBox : commentTextBox,
-            createCopyRight:createCopyRight,
-            createImage : createImage,
-            createVideo : createVideo,
-            createCardTitle : createCardTitle,
-            createCardText : createCardText,
-            createCardDate : createCardDate,
-            createDataGrid : createDataGrid,
-            createInnerGrid : createInnerGrid,
-            createOutlineGrid : createOutlineGrid,
+            commentTextBox: commentTextBox,
+            createCopyRight: createCopyRight,
+            createImage: createImage,
+            createVideo: createVideo,
+            createCardTitle: createCardTitle,
+            createCardText: createCardText,
+            createCardDate: createCardDate,
+            createDataGrid: createDataGrid,
+            createInnerGrid: createInnerGrid,
+            createOutlineGrid: createOutlineGrid,
 
         };
     })();
 
-    const commentsCreate = (function (){
+    const commentsCreate = (function () {
         function createDeleteIcon(id, text, deleteFunc) {
             const deleteImage = document.createElement("img");
             deleteImage.src = "./images/delete.png";
@@ -330,7 +336,7 @@
             return deleteImage;
         }
 
-        function createGrid(){
+        function createGrid() {
             const container = document.createElement("div");
             container.classList.add("container");
 
@@ -341,7 +347,7 @@
             return {container, row};
         }
 
-        function createCols(row){
+        function createCols(row) {
             const col1 = document.createElement("div");
             col1.classList.add("col-11");
             row.appendChild(col1);
@@ -353,7 +359,7 @@
             return {col1, col2};
         }
 
-        function createUserIcon(){
+        function createUserIcon() {
             const avatar = document.createElement("img");
             avatar.src = "images/user.jpg";
             avatar.alt = "avatar";
@@ -362,21 +368,21 @@
             return avatar;
         }
 
-        function createUserNameText(name){
+        function createUserNameText(name) {
             const username = document.createElement("p");
             username.className = "small mb-0 ms-2 h6 text-primary";
             username.textContent = name;
             return username;
         }
 
-        function createUserCommentText(txt){
+        function createUserCommentText(txt) {
             const commentText = document.createElement("p");
             commentText.className = "text-break px-2";
             commentText.textContent = txt;
             return commentText;
         }
 
-        function createFlexCard(){
+        function createFlexCard() {
             const card = document.createElement("div");
             card.classList.add("card", "mb-1");
             const cardBody = document.createElement("div");
@@ -393,7 +399,7 @@
             return {flexRow, card};
         }
 
-        function create3cols(flexRow){
+        function create3cols(flexRow) {
             const col1 = document.createElement("div");
             col1.classList.add("col-1");
             flexRow.appendChild(col1);
@@ -405,12 +411,12 @@
             const col3 = document.createElement("div");
             col3.classList.add("col");
             flexRow.appendChild(col3);
-            return {col1,col2,col3};
+            return {col1, col2, col3};
         }
 
         function commentCard(txt, name) {
             const {flexRow, card} = createFlexCard();
-            const {col1,col2,col3} = create3cols(flexRow);
+            const {col1, col2, col3} = create3cols(flexRow);
 
             col1.appendChild(createUserIcon());
             col2.appendChild(createUserNameText(name));
@@ -432,9 +438,7 @@
         const maxChars = 128;
         const sendComment = 13;
 
-        function closeModal(){
-            selectors.modalComments.setAttribute("aria-hidden", "true");
-            selectors.modalComments.setAttribute("data-bs-modal","hide");
+        function closeModal() {
             selectors.modalSpiner.classList.add("d-none");
             selectors.commentsErrorMsg.innerHTML = "Looks like there was a problem..."
         }
@@ -442,11 +446,11 @@
         function initClick(imgElement) {
             currImgDate = imgElement;
             selectors.commentTextBox.value = selectors.commentsErrorMsg.innerText = "";
-            selectors.commentModalTitle.innerText =  getTitle();
+            selectors.commentModalTitle.innerText = getTitle();
             getDateComments();
         }
 
-        function getTitle(){
+        function getTitle() {
             return "All comments for: " + currImgDate.split("-").reverse().join("-");
         }
 
@@ -455,33 +459,16 @@
 
             if (event.keyCode === sendComment) {
 
-                if(comment.trim() === "") {
+                if (comment.trim() === "") {
                     selectors.commentsErrorMsg.innerText = "comment cant be empty!"
-                }
-                else if (comment.length >= maxChars) {
+                } else if (comment.length >= maxChars) {
                     selectors.commentsErrorMsg.innerText = "text can not be longer than 128 chars"
-                }
-                else {
+                } else {
                     selectors.commentsErrorMsg.innerText = ""
                     selectors.commentTextBox.value = "";
-                    commentsUpdate("/comments/", "POST",{date: currImgDate, text: comment});
+                    commentsUpdate("/comments/", "POST", {date: currImgDate, text: comment});
                 }
             }
-        }
-
-        function commentsUpdate(url, method, bodyData) {
-            fetchHandlers.initCommentFetch(currImgDate);
-
-            fetch(url, {
-                method: method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(bodyData),
-            })
-                .then(fetchHandlers.checkResponse)
-                .then(fetchHandlers.getJson)
-                .then(getDateComments)
-                .then(() => selectors.modalSpiner.classList.add("d-none"))
-                .catch((error) => fetchHandlers.handleErrorLoad(error));
         }
 
         function printComments(listComments) {
@@ -490,9 +477,9 @@
             let {container, row} = commentsCreate.grid();
 
             listComments.forEach((comment) => {
-               const {col1, col2} = commentsCreate.cols(row);
+                const {col1, col2} = commentsCreate.cols(row);
 
-               col1.appendChild(commentsCreate.card(comment.text, selectors.userName));
+                col1.appendChild(commentsCreate.card(comment.text, "add user name"));
 
                 if (comment.email === selectors.userEmail) {
                     col2.appendChild(commentsCreate.deleteIcon(comment.id, comment.text, deleteComment));
@@ -501,44 +488,58 @@
             selectors.comments.appendChild(container);
         }
 
+        function deleteComment(id, text) {
+            commentsUpdate("/comments/", "DELETE", {date: currImgDate, id, text});
+        }
+
+        function commentsUpdate(url, method, bodyData) {
+            fetchHandlers.initCommentFetch(currImgDate);
+
+            fetch(url, {
+                method: method,
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(bodyData),
+            })
+                .then(fetchHandlers.checkResponse)
+                .then(fetchHandlers.getJson)
+                .then(getDateComments)
+                .then(() => selectors.modalSpiner.classList.add("d-none"))
+                .catch(fetchHandlers.handleErrorLoad);
+        }
+
         function getDateComments() {
             fetchHandlers.initCommentFetch(currImgDate);
 
             fetch(`/comments/${currImgDate}`)
                 .then(fetchHandlers.checkResponse)
                 .then(fetchHandlers.getJson)
-                .then((data) => printComments(data))
+                .then(printComments)
                 .then(() => selectors.modalSpiner.classList.add("d-none"))
-                .catch((error) => fetchHandlers.handleErrorLoad(error));
-        }
-
-        function deleteComment(id, text){
-            commentsUpdate("/comments/", "DELETE", {date: currImgDate, id, text});
+                .catch(fetchHandlers.handleErrorLoad);
         }
 
         return {
-            closeCommentsModal : closeModal,
+            closeCommentsModal: closeModal,
             initModal: initClick,
             type: commentTyping,
-
         };
     })();
 
     const selectors = {
-        dateErrorMsg:   document.getElementById("error-message-date"),
-        loadingSpiner:  document.getElementById("loading"),
-        scrollButton:   document.getElementById("more"),
-        endOfScroll:    document.getElementById("scrollEnd"),
-        selectDate:     document.getElementById("chooseDate"),
-        mainContainer:  document.getElementById("book-page-main"),
+        dateErrorMsg: document.getElementById("error-message-date"),
+        loadingSpiner: document.getElementById("loading"),
+        scrollButton: document.getElementById("more"),
+        endOfScroll: document.getElementById("scrollEnd"),
+        selectDate: document.getElementById("chooseDate"),
+        mainContainer: document.getElementById("book-page-main"),
         commentTextBox: document.getElementById("addANote"),
-        comments:       document.getElementById("comments"),
+        comments: document.getElementById("comments"),
         commentsErrorMsg: document.getElementById("commentErr"),
-        commentModalTitle:document.getElementById("comment-title"),
-        modalSpiner:    document.getElementById("modalLoading"),
-        modalComments:  document.getElementById("myModal"),
-        userName:       document.getElementById("userName").textContent.trim(),
-        userEmail:      document.getElementById("userEmail").textContent.trim(),
+        commentModalTitle: document.getElementById("comment-title"),
+        modalSpiner: document.getElementById("modalLoading"),
+        modalComments: document.getElementById("myModal"),
+        userName: document.getElementById("userName").textContent.trim(),
+        userEmail: document.getElementById("userEmail").textContent.trim(),
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -549,6 +550,40 @@
 
         document.getElementById("more").addEventListener("click", bookPage.handleScroll);
 
-        document.getElementById("addANote").addEventListener("keydown",  comments.type);
-    });
+        document.getElementById("addANote").addEventListener("keydown", comments.type);
+     })
 })();
+
+
+// function pollComments() {
+//     fetchHandlers.initCommentFetch(currImgDate);
+//
+//     fetch(`/comments/?date=${currImgDate}&lastPollTimestamp=${lastPollTimestamp}`)
+//         //.then(fetchHandlers.checkResponse)
+//         .then(fetchHandlers.getJson)
+//         .then((data) => {
+//             if (!data.msg) {
+//                 console.log("hereeeeee")
+//                 //      printComments(data);
+//             }
+//             else{
+//                 console.log("nothing to update")
+//             }
+//         })
+//         //     .then(() => selectors.modalSpiner.classList.add("d-none"))
+//         .then(() =>lastPollTimestamp = new Date())
+//         .catch((error) => fetchHandlers.handleErrorLoad(error));
+// }
+//
+// function stopPolling() {
+//     clearInterval(intervalId);
+// }
+//
+// function startPolling() {
+//     intervalId = setInterval(pollComments, 1500);
+// }
+//
+// document.getElementById("myModal").addEventListener("hide.bs.modal", comments.stopPolling);
+//
+// document.getElementById("myModal").addEventListener("show.bs.modal", comments.startPolling);
+//                .then(() => lastPollTimestamp = new Date().getTime())
