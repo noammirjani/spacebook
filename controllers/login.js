@@ -10,14 +10,15 @@ const COOKIE_REGISTER = 'register';
  * @param {Object} res - Express response object
  */
 exports.getLoginPage = (req, res) => {
-    renderLogin(req, res);
+
+    if(req.session.isLoggedIn){
+        delete req.session.isLoggedIn;
+        req.session.save();
+       // res.redirect('/');
+    }
+      renderLogin(req, res);
 }
 
-exports.postLoginPage = (req, res) => {
-    delete req.session.isLoggedIn;
-    req.session.save();
-    res.redirect('/')
-}
 
 /**
  * getLogin - handle the get request for the login page.
@@ -25,12 +26,13 @@ exports.postLoginPage = (req, res) => {
  * @param {Object} res - Express response object
  */
 exports.getApp = (req, res) => {
-    if(req.session.isLoggedIn)
-        renderApp(req, res);
-    else{
-        res.cookie("error","please sign in");
-        res.redirect('/')
-    }
+ 
+    //if(req.session.isLoggedIn)
+         renderApp(req, res);
+    // else{
+    //     res.cookie("error","please sign in");
+    //     res.redirect('/')
+    // }
 }
 
 /**
@@ -46,9 +48,6 @@ function updateSessionData(req, res, user) {
     req.session.save();
 }
 
-// exports.enterApp = (req, res) => {
-//     renderApp(req,res);
-// }
 
 /**
  * enterHomePage - logs in a user and renders the api page
@@ -64,7 +63,8 @@ exports.enterHomePage = async (req, res) => {
         if(!user) throw new Error("email is not found, please register")
         user.comparePasswords(password);
         updateSessionData(req,res,user);
-        res.redirect('/home');
+        renderApp(req, res);
+        //res.redirect('/home');
     }
     catch(error){
         res.cookie(COOKIE_ERROR, error.message);
@@ -72,14 +72,18 @@ exports.enterHomePage = async (req, res) => {
     }
 }
 
-//--- RENDER FUNCTIONS ----//
+
 /**
  * renderApp - renders the api page
  * @param req
  * @param {Object} res - Express response object
  */
 function renderApp(req,res){
-    res.render("home", {title: 'api', name:req.session.userName, email:req.session.email})
+    res.render("home", {
+        title: 'api',
+        name:req.session.userName,
+        email:req.session.email
+    })
 }
 
 /**
