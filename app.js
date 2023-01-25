@@ -34,43 +34,11 @@ app.use(session({
 }));
 
 
-
-const checkLogin = (req, res, next) => {
-  console.log("111111111")
-  if(req.session.isLoggedIn)
-    next();
-  else {
-    if(!req.cookies.connect){
-  //    res.cookie("error","please sign in");
-      res.render('index', {
-        title: 'Login',
-        error: "please sign in",
-        newRegistered:  ""});
-    }
-    else{
-      text = {msg: "server is down, try again later"};
-      res.status(401).json(text)
-    }
-  }
-}
-const checkLogout = (req,res, next) => {
-  if (req.session.isLoggedIn) {
-    res.redirect("/home")
-  }
-  else {
-    next();
-  }
-}
-const nocache = (req, res, next) => {
-  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0,max-age=0,s-maxage=0');
-  next();
-}
-
 // Use middleware functions
-app.use(nocache);
-app.use('/home', checkLogin, apiRouter);
-app.use('/', checkLogout, loginRouter);
-app.use('/register', checkLogout, registerRouter);
+app.use(access.nocache);
+app.use('/home', access.checkLogin, apiRouter);
+app.use('/', access.checkLogout, loginRouter);
+app.use('/register', access.checkLogout, registerRouter);
 // app.use('/login', checkLogout, loginRouter);
 
 module.exports = app;
