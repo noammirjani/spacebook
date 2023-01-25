@@ -65,11 +65,16 @@ exports.pollComments = async(req, res) => {
         console.log(modificationComments)
 
         if(modificationComments.length > 0) {
-            console.log("yayyy")
-            return getCommentsByDate(req,res,date);
+            try {
+                const comments = await db.Comment.findAll({where: {date}});
+                res.status(200).json({isUpdate:true, comments:comments});
+            }
+            catch(error) {
+                throw(error);
+            }
         }
         else{
-            res.json({msg: "msg"});
+            res.status(500).json({error: error.message, comments:[]});
         }
     }
     catch(error){

@@ -26,3 +26,9 @@ exports.getCookieData = (req, cookieKey) => {
 exports.isCookieExists = (req, cookieKey) => {
     return !!(req.cookies[cookieKey]);
 }
+
+exports.clear = (req, res, cookieKey) => {
+    if (req.cookies[cookieKey]) {
+        res.clearCookie(cookieKey)
+    }
+}

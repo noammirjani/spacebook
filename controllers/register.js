@@ -40,7 +40,7 @@ function checkTimeExpiredAndRender(req,res,errMsg=undefined){
         renderRegisterPasswords(req, res, errMsg);
 
     else  {
-        if(cookies.isCookieExists(req, COOKIE_ERROR))
+        if(cookies.isCookieExists(req, COOKIE_ERROR) || errMsg)
             res.cookie(COOKIE_ERROR, 'your time expired')
 
         res.redirect('/register');
@@ -52,11 +52,11 @@ function checkTimeExpiredAndRender(req,res,errMsg=undefined){
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.postLoginPage = (req, res) => {
+exports.userEnteredPasswords = (req, res) => {
     const {password, confirmPassword} = req.body;
 
     if (password === confirmPassword)
-        registerUser(password, req, res).then();
+        registerNewUser(password, req, res).then();
 
     else {
         checkTimeExpiredAndRender(req,res, 'passwords do not match');
@@ -75,7 +75,7 @@ exports.userBaseDataEntered = async (req, res) => {
         const emailExists = await db.User.findOne({where: { email:email.toLowerCase() } });
 
         if (emailExists) throw new Error('Email already in use');
-        else setNewUserCookie(req, res, {email, firstName, lastName});
+        setNewUserCookie(req, res, {email, firstName, lastName});
         res.redirect("/register/register-passwords")
     }
     catch (error) {
@@ -115,21 +115,19 @@ const createUser = async (firstName, lastName, email, password, res) => {
 }
 
 /**
- * registerUser - registers a new user
+ * registerNewUser - registers a new user
  * @param {string} password
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-const registerUser = async (password, req, res) => {
+const registerNewUser = async (password, req, res) => {
     try{
         let {email, firstName, lastName} = cookies.getCookieData(req, COOKIE_USER);
         await createUser(firstName, lastName, email, password, res);
         res.redirect('/');
     }
     catch(error){
-        res.cookie(COOKIE_ERROR, error.message);
-  //      res.redirect('/register');
-        renderRegisterPasswords(req,res)
+        checkTimeExpiredAndRender(req,res, error.message)
     }
 }
 
@@ -142,6 +140,7 @@ const registerUser = async (password, req, res) => {
  * @param {User} userObj - User object
  */
 function renderRegister(req, res, userObj=undefined, errMsg=undefined){
+    if(errMsg) cookies.clear(req,res,COOKIE_ERROR)
     const {email, firstName, lastName} = userObj || {undefined}
     res.render('register', {
         title:'register',
@@ -155,9 +154,12 @@ function renderRegister(req, res, userObj=undefined, errMsg=undefined){
  * @param {Object} req - Express response object
  */
 function renderRegisterPasswords(req, res,errMsg=undefined){
+    if(errMsg) cookies.clear(req,res,COOKIE_ERROR)
+
     res.render('register-passwords', {
         title: 'register-passwords',
         error:errMsg||cookies.getCookieText(req,res,COOKIE_ERROR)});
+
 }
 
 

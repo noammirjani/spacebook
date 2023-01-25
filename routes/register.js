@@ -18,7 +18,7 @@ router.post('/',
 router.post('/register-passwords',
     registerController.userBaseDataEntered);
 
-router.post('/user-password', registerController.postLoginPage)
+router.post('/user-password', registerController.userEnteredPasswords)
 
 
 module.exports = router;
