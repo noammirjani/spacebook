@@ -1,30 +1,29 @@
 const express = require("express");
-const commentsController = require("../controllers/api");
+const apiController = require("../controllers/api");
 const loginController = require("../controllers/login");
 const router = express.Router();
 
 //GET
-
-router.get('/home',
-    loginController.getApp);
+router.get('/',
+    apiController.getApp);
 
 //LOGOUT FEED
-router.get('/home/logout',
-    loginController.logOut);
+router.get('/logout',
+    apiController.logOut);
 
 router.get('/comments/:date',
-    commentsController.getComments);
+    apiController.getComments);
 
 router.get('/comments?date&lastPollTimestamp',
-    commentsController.pollComments);
+    apiController.pollComments);
 
 //POST COMMENTS
 router.post('/comments',
-    commentsController.postComment);
+    apiController.postComment);
 
 //DELETE COMMENTS
 router.delete('/comments',
-    commentsController.deleteComment);
+    apiController.deleteComment);
 
 
 module.exports = router;

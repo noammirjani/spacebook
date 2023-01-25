@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const registerController = require('../controllers/register');
+const loginController = require('../controllers/login');
 
 /* GET */
 router.get('/',
@@ -16,5 +17,8 @@ router.post('/',
 
 router.post('/register-passwords',
     registerController.userBaseDataEntered);
+
+router.post('/user-password', registerController.postLoginPage)
+
 
 module.exports = router;

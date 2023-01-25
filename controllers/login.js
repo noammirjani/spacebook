@@ -10,30 +10,12 @@ const COOKIE_REGISTER = 'register';
  * @param {Object} res - Express response object
  */
 exports.getLoginPage = (req, res) => {
-    // if(req.session.isLoggedIn){
-    //     req.session.isLoggedIn =  false;
-    //   //  req.session.save();
-    //     //redirect('/');
-    // }
-    renderLogin(req, res);
+    res.render('index', {
+        title: 'Login',
+        error: cookies.getCookieText(req,res,COOKIE_ERROR) || "",
+        newRegistered: cookies.getCookieText(req,res,COOKIE_REGISTER) || ""});
 }
 
-
-/**
- * getLogin - handle the get request for the login page.
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-exports.getApp = (req, res) => {
-
-    renderApp(req, res);
-}
-
-exports.logOut = (req, res) => {
-    req.session.isLoggedIn = false;
-//    req.session.save();
-    redirect('/');
-}
 
 /**
  * updateSessionData - update the Session data
@@ -45,7 +27,6 @@ function updateSessionData(req, res, user) {
     req.session.userName = user.firstName + ' ' + user.lastName;
     req.session.email = user.email;
     req.session.isLoggedIn = true;
-    req.session.save();
 }
 
 
@@ -57,6 +38,7 @@ function updateSessionData(req, res, user) {
 exports.enterHomePage = async (req, res) => {
 
     try {
+        console.log("in enter home page!")
         let {email, password} = req.body;
         email = email.toLowerCase();
         if(!email || !password) throw new Error("SORRY - data was not found, try again");
@@ -70,34 +52,10 @@ exports.enterHomePage = async (req, res) => {
     }
     catch(error){
         res.cookie(COOKIE_ERROR, error.message);
-        res.redirect('/');
-     //   renderLogin(req,res)
+       // res.redirect('/');
+        res.render('index', {
+            title: 'Login',
+            error: error.message,
+            newRegistered: ""});
     }
-}
-
-
-/**
- * renderApp - renders the api page
- * @param req
- * @param {Object} res - Express response object
- */
-function renderApp(req,res){
-
-    res.render("home", {
-        title: 'api',
-        name:req.session.userName,
-        email:req.session.email
-    })
-}
-
-/**
- * renderLogin - displays the login page.
- * @param {Object} res - Express response object
- * @param {Object} req - Express response object
- */
-function renderLogin(req, res){
-    res.render('index', {
-        title: 'Login',
-        error: cookies.getCookieText(req,res,COOKIE_ERROR) || "",
-        newRegistered: cookies.getCookieText(req,res,COOKIE_REGISTER) || ""});
 }

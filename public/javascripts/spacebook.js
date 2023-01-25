@@ -555,25 +555,25 @@
 })();
 
 
-// function pollComments() {
-//     fetchHandlers.initCommentFetch(currImgDate);
-//
-//     fetch(`/comments/?date=${currImgDate}&lastPollTimestamp=${lastPollTimestamp}`)
-//         //.then(fetchHandlers.checkResponse)
-//         .then(fetchHandlers.getJson)
-//         .then((data) => {
-//             if (!data.msg) {
-//                 console.log("hereeeeee")
-//                 //      printComments(data);
-//             }
-//             else{
-//                 console.log("nothing to update")
-//             }
-//         })
-//         //     .then(() => selectors.modalSpiner.classList.add("d-none"))
-//         .then(() =>lastPollTimestamp = new Date())
-//         .catch((error) => fetchHandlers.handleErrorLoad(error));
-// }
+function pollComments() {
+    fetchHandlers.initCommentFetch(currImgDate);
+
+    fetch(`/comments/?date=${currImgDate}&lastPollTimestamp=${lastPollTimestamp}`)
+        //.then(fetchHandlers.checkResponse)
+        .then(fetchHandlers.getJson)
+        .then((data) => {
+            if (!data.msg) {
+                console.log("hereeeeee")
+             //   printComments(data);
+            }
+            else{
+                console.log("nothing to update")
+            }
+        })
+        //     .then(() => selectors.modalSpiner.classList.add("d-none"))
+        .then(() =>lastPollTimestamp = new Date())
+        .catch((error) => fetchHandlers.handleErrorLoad(error));
+}
 //
 // function stopPolling() {
 //     clearInterval(intervalId);

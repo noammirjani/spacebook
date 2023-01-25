@@ -10,7 +10,7 @@ let fs           = require('fs');
 
 let registerRouter = require('./routes/register'); //register
 let loginRouter    = require('./routes/login');       //login
-let commentsRouter = require('./routes/api'); //comments
+let apiRouter = require('./routes/api'); //comments
 
 
 let app = express();
@@ -25,16 +25,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+// Session
 app.use(session({
-  secret: 'key',
-  resave: false,
-  saveUninitialized: true
+  secret:"somesecretkey",
+  resave: false, // Force save of session for each request
+  saveUninitialized: false, // Save a session that is new, but has not been modified
+  cookie: {maxAge: 10*60*1000 } // milliseconds!
 }));
 
-
-// /login /register /register-passwords  /comments /home
-// Define routers
 
 
 const checkLogin = (req, res, next) => {
@@ -55,7 +53,6 @@ const checkLogin = (req, res, next) => {
     }
   }
 }
-
 const checkLogout = (req,res, next) => {
   if (req.session.isLoggedIn) {
     res.redirect("/home")
@@ -69,10 +66,10 @@ const nocache = (req, res, next) => {
   next();
 }
 
-// Use middleware functions /register-password /
+// Use middleware functions
 app.use(nocache);
+app.use('/home', checkLogin, apiRouter);
 app.use('/', checkLogout, loginRouter);
-app.use('/home', checkLogin, commentsRouter);
 app.use('/register', checkLogout, registerRouter);
 // app.use('/login', checkLogout, loginRouter);
 

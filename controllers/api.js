@@ -54,10 +54,11 @@ exports.pollComments = async(req, res) => {
     try{
         const date = req.query.date;
         const lastPollTimestamp = req.query.lastPollTimestamp;
+
         const modificationComments = await db.Comment.findAll({
             paranoid: false,
             force: true,
-            where: { deleteAt: {[Op.gt]: lastPollTimestamp}, date:date }
+            where: { updateAt: {[Op.gt]: lastPollTimestamp}, date:date }
         });
 
 
@@ -74,4 +75,23 @@ exports.pollComments = async(req, res) => {
     catch(error){
         res.status(500).json("Error polling comments");
     }
+}
+
+/**
+ * getLogin - handle the get request for the login page.
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.getApp = (req, res) => {
+
+    res.render('home', {
+        title: 'api',
+        name:req.session.userName,
+        email:req.session.email
+    })
+}
+
+exports.logOut = (req, res) => {
+    req.session.isLoggedIn = false;
+    res.redirect('/');
 }
