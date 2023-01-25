@@ -6,7 +6,7 @@ const loginController    = require('../controllers/login');
 
 /* GET */
 router.get('/',
-    loginController.getLoginPage);
+    loginController.renderLoginPage);
 
 
 /* POST */

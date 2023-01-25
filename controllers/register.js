@@ -31,16 +31,20 @@ exports.enterToRegisterPage = (req, res) => {
  */
 exports.getRegisterPasswordsPage = (req, res) => {
 
-        if(cookies.isCookieExists(req, COOKIE_USER))
-            renderRegisterPasswords(req, res);
+    checkTimeExpiredAndRender(req,res);
+}
 
-        else  {
-            if(cookies.isCookieExists(req, COOKIE_ERROR))
-                res.cookie(COOKIE_ERROR, 'your time expired')
 
-            res.redirect('/register');
-           // renderRegister(req,res)
-        }
+function checkTimeExpiredAndRender(req,res,errMsg=undefined){
+    if(cookies.isCookieExists(req, COOKIE_USER))
+        renderRegisterPasswords(req, res, errMsg);
+
+    else  {
+        if(cookies.isCookieExists(req, COOKIE_ERROR))
+            res.cookie(COOKIE_ERROR, 'your time expired')
+
+        res.redirect('/register');
+    }
 }
 
 /**
@@ -55,9 +59,7 @@ exports.postLoginPage = (req, res) => {
         registerUser(password, req, res).then();
 
     else {
-        res.render('register-passwords', {
-            title: 'register-passwords',
-            error: 'passwords do not match'});
+        checkTimeExpiredAndRender(req,res, 'passwords do not match');
     }
 };
 
@@ -77,8 +79,7 @@ exports.userBaseDataEntered = async (req, res) => {
         res.redirect("/register/register-passwords")
     }
     catch (error) {
-        res.cookie(COOKIE_ERROR, error.message);
-        renderRegister(req,res);
+        renderRegister(req,res,undefined ,error.message );
     }
 };
 
@@ -140,11 +141,11 @@ const registerUser = async (password, req, res) => {
  * @param {Object} req - Express response object
  * @param {User} userObj - User object
  */
-function renderRegister(req, res, userObj=undefined){
+function renderRegister(req, res, userObj=undefined, errMsg=undefined){
     const {email, firstName, lastName} = userObj || {undefined}
     res.render('register', {
         title:'register',
-        error:cookies.getCookieText(req,res,COOKIE_ERROR),
+        error: errMsg || cookies.getCookieText(req,res,COOKIE_ERROR),
         email, firstName, lastName});
 }
 
@@ -153,10 +154,10 @@ function renderRegister(req, res, userObj=undefined){
  * @param {Object} res - Express response object
  * @param {Object} req - Express response object
  */
-function renderRegisterPasswords(req, res){
+function renderRegisterPasswords(req, res,errMsg=undefined){
     res.render('register-passwords', {
         title: 'register-passwords',
-        error:cookies.getCookieText(req,res,COOKIE_ERROR)});
+        error:errMsg||cookies.getCookieText(req,res,COOKIE_ERROR)});
 }
 
 

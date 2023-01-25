@@ -9,13 +9,17 @@ const COOKIE_REGISTER = 'register';
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.getLoginPage = (req, res) => {
+exports.renderLoginPage = (req, res) => {
+    renderLoginPage(req, res);
+}
+
+
+function renderLoginPage (req, res){
     res.render('index', {
         title: 'Login',
         error: cookies.getCookieText(req,res,COOKIE_ERROR) || "",
         newRegistered: cookies.getCookieText(req,res,COOKIE_REGISTER) || ""});
 }
-
 
 /**
  * updateSessionData - update the Session data
@@ -52,10 +56,7 @@ exports.enterHomePage = async (req, res) => {
     }
     catch(error){
         res.cookie(COOKIE_ERROR, error.message);
-       // res.redirect('/');
-        res.render('index', {
-            title: 'Login',
-            error: error.message,
-            newRegistered: ""});
+        renderLoginPage(req,res);
+
     }
 }
