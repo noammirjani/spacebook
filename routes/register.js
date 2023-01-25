@@ -4,14 +4,17 @@ const router = express.Router();
 const registerController = require('../controllers/register');
 
 /* GET */
-router.get('/register',
-    registerController.getRegisterPage);
+router.get('/',
+    registerController.enterToRegisterPage);
 
 router.get('/register-passwords',
     registerController.getRegisterPasswordsPage);
 
 /* POST */
+router.post('/',
+     registerController.errorEnter); //is not suppose to happened though
+
 router.post('/register-passwords',
-    registerController.postRegisterPasswords);
+    registerController.userBaseDataEntered);
 
 module.exports = router;

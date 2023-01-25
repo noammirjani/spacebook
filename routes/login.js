@@ -9,16 +9,13 @@ const registerController = require('../controllers/register');
 router.get('/',
     loginController.getLoginPage);
 
-router.get('/login',
-    loginController.getLoginPage);
-
+router.get('/login/submit',
+    loginController.getApp);
 
 /* POST */
 router.post('/',
     registerController.postLoginPage);
 
-router.post('/login',
-    registerController.postLoginPage);
 
 router.post('/login/submit',
     loginController.enterHomePage);

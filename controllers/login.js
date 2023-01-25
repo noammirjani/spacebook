@@ -10,12 +10,11 @@ const COOKIE_REGISTER = 'register';
  * @param {Object} res - Express response object
  */
 exports.getLoginPage = (req, res) => {
-
-    if(req.session.isLoggedIn){
-        delete req.session.isLoggedIn;
-        req.session.save();
-        //redirect('/');
-    }
+    // if(req.session.isLoggedIn){
+    //     req.session.isLoggedIn =  false;
+    //   //  req.session.save();
+    //     //redirect('/');
+    // }
     renderLogin(req, res);
 }
 
@@ -28,6 +27,12 @@ exports.getLoginPage = (req, res) => {
 exports.getApp = (req, res) => {
 
     renderApp(req, res);
+}
+
+exports.logOut = (req, res) => {
+    req.session.isLoggedIn = false;
+//    req.session.save();
+    redirect('/');
 }
 
 /**
@@ -50,12 +55,15 @@ function updateSessionData(req, res, user) {
  * @param {Object} res - Express response object
  */
 exports.enterHomePage = async (req, res) => {
-    let {email, password} = req.body;
-    email = email.toLowerCase();
 
     try {
+        let {email, password} = req.body;
+        email = email.toLowerCase();
+        if(!email || !password) throw new Error("SORRY - data was not found, try again");
+
         const user = await db.User.findOne({where: {email}});
-        if(!user) throw new Error("email is not found, please register")
+        if(!user) throw new Error("email is not found, please register");
+
         user.comparePasswords(password);
         updateSessionData(req,res,user);
         res.redirect('/home');
@@ -63,6 +71,7 @@ exports.enterHomePage = async (req, res) => {
     catch(error){
         res.cookie(COOKIE_ERROR, error.message);
         res.redirect('/');
+     //   renderLogin(req,res)
     }
 }
 
@@ -87,7 +96,7 @@ function renderApp(req,res){
  * @param {Object} req - Express response object
  */
 function renderLogin(req, res){
-    res.render('login', {
+    res.render('index', {
         title: 'Login',
         error: cookies.getCookieText(req,res,COOKIE_ERROR) || "",
         newRegistered: cookies.getCookieText(req,res,COOKIE_REGISTER) || ""});

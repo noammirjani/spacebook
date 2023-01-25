@@ -1,5 +1,5 @@
 <%- include('includes/head.ejs') %>
-<link rel='stylesheet' href='stylesheets/loginStyle.css' />
+<link rel='stylesheet' href='/stylesheets/loginStyle.css'/>
 </head>
 <body>
 <header></header>
@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <div class="card-main">
-                    <form action="/register-passwords" method="post">
+                    <form action="/register/register-passwords" method="post">
                         <div class="row mb-3 d-flex justify-content-center">
                             <div class="col-10 text center">
                                 <input type="email" class="form-control text-center" id="userEmail" name="email" aria-describedby="emailHelp"

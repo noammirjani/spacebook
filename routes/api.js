@@ -4,11 +4,13 @@ const loginController = require("../controllers/login");
 const router = express.Router();
 
 //GET
-router.get('/home/logout',
-    loginController.getApp);
 
 router.get('/home',
     loginController.getApp);
+
+//LOGOUT FEED
+router.get('/home/logout',
+    loginController.logOut);
 
 router.get('/comments/:date',
     commentsController.getComments);
@@ -23,10 +25,6 @@ router.post('/comments',
 //DELETE COMMENTS
 router.delete('/comments',
     commentsController.deleteComment);
-
-//POST FEED
-router.post('/home/logout',
-    loginController.getLoginPage);
 
 
 module.exports = router;

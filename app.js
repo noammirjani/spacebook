@@ -33,17 +33,48 @@ app.use(session({
 }));
 
 
-function x(req,res,next){
-  console.log("request ", req);
+// /login /register /register-passwords  /comments /home
+// Define routers
+
+
+const checkLogin = (req, res, next) => {
+  console.log("111111111")
+  if(req.session.isLoggedIn)
+    next();
+  else {
+    if(!req.cookies.connect){
+  //    res.cookie("error","please sign in");
+      res.render('index', {
+        title: 'Login',
+        error: "please sign in",
+        newRegistered:  ""});
+    }
+    else{
+      text = {msg: "server is down, try again later"};
+      res.status(401).json(text)
+    }
+  }
+}
+
+const checkLogout = (req,res, next) => {
+  if (req.session.isLoggedIn) {
+    res.redirect("/home")
+  }
+  else {
+    next();
+  }
+}
+const nocache = (req, res, next) => {
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0,max-age=0,s-maxage=0');
   next();
 }
 
-
-// /login /register /register-passwords  /comments /home
-app.use(access.nocache, access.checkLogout, loginRouter);
-app.use(access.nocache, access.checkLogout, registerRouter);
-app.use(access.nocache, access.checkLogin, commentsRouter);
-
+// Use middleware functions /register-password /
+app.use(nocache);
+app.use('/', checkLogout, loginRouter);
+app.use('/home', checkLogin, commentsRouter);
+app.use('/register', checkLogout, registerRouter);
+// app.use('/login', checkLogout, loginRouter);
 
 module.exports = app;
 
