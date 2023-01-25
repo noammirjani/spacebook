@@ -12,8 +12,6 @@ router.get('/',
 router.get('/login',
     loginController.getLoginPage);
 
-router.get('/home',
-    loginController.getApp);
 
 /* POST */
 router.post('/',
@@ -22,7 +20,7 @@ router.post('/',
 router.post('/login',
     registerController.postLoginPage);
 
-router.post('/home',
+router.post('/login/submit',
     loginController.enterHomePage);
 
 module.exports = router;

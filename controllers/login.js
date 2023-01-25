@@ -14,9 +14,9 @@ exports.getLoginPage = (req, res) => {
     if(req.session.isLoggedIn){
         delete req.session.isLoggedIn;
         req.session.save();
-       // res.redirect('/');
+        //redirect('/');
     }
-      renderLogin(req, res);
+    renderLogin(req, res);
 }
 
 
@@ -58,8 +58,7 @@ exports.enterHomePage = async (req, res) => {
         if(!user) throw new Error("email is not found, please register")
         user.comparePasswords(password);
         updateSessionData(req,res,user);
-        renderApp(req, res);
-        //res.redirect('/home');
+        res.redirect('/home');
     }
     catch(error){
         res.cookie(COOKIE_ERROR, error.message);
@@ -74,6 +73,7 @@ exports.enterHomePage = async (req, res) => {
  * @param {Object} res - Express response object
  */
 function renderApp(req,res){
+
     res.render("home", {
         title: 'api',
         name:req.session.userName,

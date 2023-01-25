@@ -249,7 +249,7 @@
             img.src = url;
             img.alt = `The img of the day: date ${date}`;
             img.id = date;
-            img.style.width = "600px";
+            img.style.width = "700px";
             img.style.height = "550px";
             return img;
         }
