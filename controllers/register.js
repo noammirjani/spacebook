@@ -141,6 +141,7 @@ const registerNewUser = async (password, req, res) => {
  */
 function renderRegister(req, res, userObj=undefined, errMsg=undefined){
     if(errMsg) cookies.clear(req,res,COOKIE_ERROR)
+
     const {email, firstName, lastName} = userObj || {undefined}
     res.render('register', {
         title:'register',
@@ -158,7 +159,7 @@ function renderRegisterPasswords(req, res,errMsg=undefined){
 
     res.render('register-passwords', {
         title: 'register-passwords',
-        error:errMsg||cookies.getCookieText(req,res,COOKIE_ERROR)});
+        error:errMsg||cookies.getCookieText(req,res,COOKIE_ERROR) || ""});
 
 }
 

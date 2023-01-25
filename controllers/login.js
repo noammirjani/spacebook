@@ -14,10 +14,11 @@ exports.renderLoginPage = (req, res) => {
 }
 
 
-function renderLoginPage (req, res){
+function renderLoginPage (req, res, errMsg){
+
     res.render('index', {
         title: 'Login',
-        error: cookies.getCookieText(req,res,COOKIE_ERROR) || "",
+        error: errMsg || "",
         newRegistered: cookies.getCookieText(req,res,COOKIE_REGISTER) || ""});
 }
 
@@ -55,8 +56,7 @@ exports.enterHomePage = async (req, res) => {
         res.redirect('/home');
     }
     catch(error){
-        res.cookie(COOKIE_ERROR, error.message);
-        renderLoginPage(req,res);
-
+     //   res.cookie(COOKIE_ERROR, error.message);
+        renderLoginPage(req,res,error.message);
     }
 }
