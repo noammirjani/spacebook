@@ -3,12 +3,11 @@
 
     const fetchHandlers = (function () {
         function checkResponse(response) {
-
             if (response.status >= 200 && response.status < 300) {
                 return Promise.resolve(response);
             } else {
                 return response.json().then((data) => {
-                    return Promise.reject(new Error(`${data.code}${data.msg || data.message}`));
+                    return Promise.reject(new Error(`${data.code}<br><br>${data.msg || data.message}`));
                 });
             }
         }
@@ -19,7 +18,8 @@
 
         function handleErrorLoad(error) {
             comments.closeCommentsModal();
-            selectors.dateErrorMsg.innerHTML = `Looks like there was a problem. <br> Status Code: ${error}`;
+            selectors.dateErrorMsg.innerHTML  = `Looks like there was a problem.<br><br> Status Code: ${error.message}
+                                                <br><br> you can try load again the feed`;
             selectors.dateErrorMsg.classList.remove("d-none");
             document.getElementById("book-page-main").innerHTML = ""
             selectors.scrollButton.classList.add("d-none");
@@ -41,11 +41,8 @@
         }
 
         function initCommentFetch(dateStr) {
-
             if (!date.valid(dateStr))
                 fetchHandlers.handleErrorLoad("date pattern is not valid")
-
-        //    selectors.modalSpiner.classList.remove("d-none");
         }
 
         return {
@@ -89,14 +86,21 @@
         }
 
         function checkPatternDates(startDate, endDate) {
+            console.log(startDate, endDate)
 
             if (!isValid(startDate) || !isValid(endDate)) {
                 fetchHandlers.handleErrorLoad("date pattern is not valid, <br> enter new date type 'YYYY-MM-DD'");
+                return false;
             }
+            return true;
         }
 
         function isValid(date) {
             return datePattern.test(date);
+        }
+
+        function currTime(){
+            return new Date().toUTCString().replace(/\([^()]*\)/g, "");
         }
 
         return {
@@ -104,6 +108,7 @@
             prev: calcPrevDate,
             check: checkPatternDates,
             valid: isValid,
+            currTime: currTime,
         };
     })();
 
@@ -134,14 +139,15 @@
         function loadData(endDate, scrollMode = false) {
             const startDate = date.prev(endDate, maxImagesForPage - 1);
 
+            if(!date.check(startDate,endDate)) return;
+
             fetchHandlers.startSpiner();
 
             fetch(`https://api.nasa.gov/planetary/apod?api_key=${APIKEY}&start_date=${startDate}&end_date=${endDate}`)
                 .then(fetchHandlers.checkResponse)
                 .then(fetchHandlers.getJson)
-                .then(successLoad)
-                .catch(failedLoad);
-
+                .then((data) => successLoad(data, startDate))
+                .catch((error) => failedLoad(error, scrollMode));
         }
 
         function presentData(responseData, startDate) {
@@ -322,7 +328,6 @@
             createDataGrid: createDataGrid,
             createInnerGrid: createInnerGrid,
             createOutlineGrid: createOutlineGrid,
-
         };
     })();
 
@@ -351,11 +356,9 @@
             const col1 = document.createElement("div");
             col1.classList.add("col-11");
             row.appendChild(col1);
-
             const col2 = document.createElement("div");
             col2.classList.add("col-1", "d-flex", "align-items-center", "justify-content-center", "my-auto");
             row.appendChild(col2);
-
             return {col1, col2};
         }
 
@@ -417,14 +420,11 @@
         function commentCard(txt, name) {
             const {flexRow, card} = createFlexCard();
             const {col1, col2, col3} = create3cols(flexRow);
-
             col1.appendChild(createUserIcon());
             col2.appendChild(createUserNameText(name));
             col3.appendChild(createUserCommentText(txt));
-
             return card;
         }
-
         return {
             deleteIcon: createDeleteIcon,
             grid: createGrid,
@@ -443,7 +443,7 @@
             selectors.commentsErrorMsg.innerHTML = "Looks like there was a problem..."
         }
 
-        function initClick(imgElement) {
+        function initModal(imgElement) {
             currImgDate = imgElement;
             selectors.commentTextBox.value = selectors.commentsErrorMsg.innerText = "";
             selectors.commentModalTitle.innerText = getTitle();
@@ -466,9 +466,13 @@
                 } else {
                     selectors.commentsErrorMsg.innerText = ""
                     selectors.commentTextBox.value = "";
-                    commentsUpdate("/comments/", "POST", {date: currImgDate, text: comment});
+                    postComment(comment)
                 }
             }
+        }
+
+        function postComment(commentTxt){
+            commentsUpdate("/home/comments", "POST", {date: currImgDate, text: commentTxt});
         }
 
         function printComments(listComments) {
@@ -489,7 +493,7 @@
         }
 
         function deleteComment(id, text) {
-            commentsUpdate("/comments/", "DELETE", {date: currImgDate, id, text});
+            commentsUpdate("/home/comments", "DELETE", {date: currImgDate, id, text});
         }
 
         function commentsUpdate(url, method, bodyData) {
@@ -504,24 +508,59 @@
                 .then(fetchHandlers.getJson)
                 .then(getDateComments)
                 .then(() => selectors.modalSpiner.classList.add("d-none"))
+                .then(() => lastPollTimestamp = date.currTime())
                 .catch(fetchHandlers.handleErrorLoad);
         }
 
         function getDateComments() {
-            fetchHandlers.initCommentFetch(currImgDate);
 
-            fetch(`/comments/${currImgDate}`)
+            fetchHandlers.initCommentFetch(currImgDate);
+            selectors.modalSpiner.classList.remove("d-none");
+
+            fetch(`/home/comments?date=${currImgDate}`)
                 .then(fetchHandlers.checkResponse)
                 .then(fetchHandlers.getJson)
-                .then(printComments)
+                .then((data) => printComments(data))
                 .then(() => selectors.modalSpiner.classList.add("d-none"))
+                .then(lastPollTimestamp = date.currTime())
                 .catch(fetchHandlers.handleErrorLoad);
+        }
+
+        function pollComments() {
+            fetchHandlers.initCommentFetch(currImgDate);
+
+            fetch(`/home/poll-comments/?date=${currImgDate}&lastPollTimestamp=${lastPollTimestamp}&email=${selectors.userEmail}`)
+                .then(fetchHandlers.checkResponse)
+                .then(fetchHandlers.getJson)
+                .then((data) => pollHandler(data))
+                .catch((error) => fetchHandlers.handleErrorLoad(error));
+        }
+
+        function pollHandler(data){
+            if (data.isUpdate) {
+                selectors.modalSpiner.classList.remove("d-none");
+                setTimeout(() => {
+                    selectors.modalSpiner.classList.add("d-none")
+                    printComments(data.comments);
+                    }, 3000);
+                lastPollTimestamp = data.updateTime;
+            }
+        }
+
+        function stopPolling() {
+            clearInterval(intervalId);
+        }
+
+        function startPolling() {
+            intervalId = setInterval(pollComments, 15000);
         }
 
         return {
             closeCommentsModal: closeModal,
-            initModal: initClick,
+            initModal: initModal,
             type: commentTyping,
+            startPolling:startPolling,
+            stopPolling:stopPolling,
         };
     })();
 
@@ -551,39 +590,9 @@
         document.getElementById("more").addEventListener("click", bookPage.handleScroll);
 
         document.getElementById("addANote").addEventListener("keydown", comments.type);
+
+        document.getElementById("myModal").addEventListener("hide.bs.modal", comments.stopPolling);
+
+        document.getElementById("myModal").addEventListener("show.bs.modal", comments.startPolling);
      })
 })();
-
-
-function pollComments() {
-    fetchHandlers.initCommentFetch(currImgDate);
-
-    fetch(`/comments/?date=${currImgDate}&lastPollTimestamp=${lastPollTimestamp}`)
-        //.then(fetchHandlers.checkResponse)
-        .then(fetchHandlers.getJson)
-        .then((data) => {
-            if (!data.msg) {
-                console.log("hereeeeee")
-             //   printComments(data);
-            }
-            else{
-                console.log("nothing to update")
-            }
-        })
-        //     .then(() => selectors.modalSpiner.classList.add("d-none"))
-        .then(() =>lastPollTimestamp = new Date())
-        .catch((error) => fetchHandlers.handleErrorLoad(error));
-}
-//
-// function stopPolling() {
-//     clearInterval(intervalId);
-// }
-//
-// function startPolling() {
-//     intervalId = setInterval(pollComments, 1500);
-// }
-//
-// document.getElementById("myModal").addEventListener("hide.bs.modal", comments.stopPolling);
-//
-// document.getElementById("myModal").addEventListener("show.bs.modal", comments.startPolling);
-//                .then(() => lastPollTimestamp = new Date().getTime())

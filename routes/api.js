@@ -14,7 +14,7 @@ router.get('/logout',
 router.get('/comments',
     apiController.getComments);
 
-router.get('/comments?date&lastPollTimestamp',
+router.get('/poll-comments',
     apiController.pollComments);
 
 //POST COMMENTS

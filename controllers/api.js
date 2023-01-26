@@ -2,16 +2,20 @@ const db = require("../models");
 const { Op } = require('sequelize');
 
 exports.getComments = async(req, res) => {
-    getCommentsByDate(req,res, req.params.date)
-}
+  //  getCommentsByDate(req,res, req.params.date)
 
-async function getCommentsByDate(req, res, date){
+    date = req.query.date;
+
     try {
-        const comments = await db.Comment.findAll({where: {date}}) || [];
+        const comments = await db.Comment.findAll({where: {date}});
         res.status(200).json(comments);
     } catch (error) {
         res.status(500).json({error: error.message});
     }
+}
+
+async function getCommentsByDate(req, res, date){
+
 }
 
 exports.postComment = async(req, res) => {
@@ -51,32 +55,37 @@ exports.deleteComment = async(req, res) => {
 
 
 exports.pollComments = async(req, res) => {
-    try{
-        const date = req.query.date;
-        const lastPollTimestamp = req.query.lastPollTimestamp;
+try {
+    const date = req.query.date;
+    const time = req.query.lastPollTimestamp;
+    const user = req.query.email;
 
-        const modificationComments = await db.Comment.findAll({
-            paranoid: false,
-            force: true,
-            where: { updateAt: {[Op.gt]: lastPollTimestamp}, date:date }
+    const modify = await db.Comment.findAll({
+        paranoid: false,
+        force: true,
+        where: {
+            updatedAt: {[Op.gt]: time},
+            date,
+            email: {[Op.ne]: user}  // added condition
+        }
+    });
+
+    if (modify.length > 0) {
+        const comments = await db.Comment.findAll({where: {date}}) || [];
+        res.status(200).json({
+            isUpdate: true,
+            comments: comments,
+            updateTime: new Date().toUTCString().replace(/\([^()]*\)/g, ""),
+            amount: modify.length
         });
-
-
-        console.log(modificationComments)
-
-        if(modificationComments.length > 0) {
-            try {
-                const comments = await db.Comment.findAll({where: {date}});
-                res.status(200).json({isUpdate:true, comments:comments});
-            }
-            catch(error) {
-                throw(error);
-            }
-        }
-        else{
-            res.status(500).json({error: error.message, comments:[]});
-        }
     }
+    else res.status(203).json({
+        isUpdate: false,
+        comments: [],
+        updateTime: time,
+        amount: 0
+    });
+}
     catch(error){
         res.status(500).json("Error polling comments");
     }

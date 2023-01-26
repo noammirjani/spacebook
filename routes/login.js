@@ -8,6 +8,9 @@ const loginController    = require('../controllers/login');
 router.get('/',
     loginController.renderLoginPage);
 
+router.get('/login/submit',
+    loginController.renderLoginPage);
+
 
 /* POST */
 router.post('/login/submit',
