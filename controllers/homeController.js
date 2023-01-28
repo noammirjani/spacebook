@@ -1,5 +1,5 @@
 const db = require("../models");
-const Op = require("sequelize");
+const {Op} = require("sequelize");
 const access =  require("./checkAccess");
 
 /**
@@ -163,20 +163,20 @@ exports.pollComments = async (req, res) => {
 		if (modify.length > 0) {
 			const comments = await getCommentsByDate(date)
 			newTime = new Date().toUTCString().replace(/\([^()]*\)/g, "")
-			sendPollResponse(res, 200, true,comments, newTime, modify.length)
-			// res.status(200).json({
-			// 	isUpdate: true,
-			// 	comments: comments,
-			// 	updateTime: , ""),
-			// 	amount: modify.length,
-			// });
-		} else sendPollResponse(res,203, false,[], time, modify.length)
-			// res.status(203).json({
-			// 	isUpdate: false,
-			// 	comments: [],
-			// 	updateTime: time,
-			// 	amount: 0,
-			// });
+		//	sendPollResponse(res, 200, true,comments, newTime, modify.length)
+			res.status(200).json({
+				isUpdate: true,
+				comments: comments,
+				updateTime: newTime,
+				amount: modify.length,
+			});
+		} else // sendPollResponse(res,203, false,[], time, modify.length)
+			res.status(203).json({
+				isUpdate: false,
+				comments: [],
+				updateTime: time,
+				amount: 0,
+			});
 	} catch (error) {
 		catchError(req,res, error);
 	}

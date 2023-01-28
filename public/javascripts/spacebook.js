@@ -770,7 +770,7 @@
          * This function starts the comment polling interval
          */
         function startPolling() {
-            intervalId = setInterval(pollComments, 15000);
+            intervalId = setInterval(pollComments, 12000);
         }
 
         return {
