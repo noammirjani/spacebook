@@ -57,14 +57,14 @@ npm install
     Home page Preview
 </p>
 </p>
-<img src="[here add photo]">
+<img src="public/images/appPreview/signIn.jpeg">
 </td> 
 <td width="50%">
 <br>
 <p align="center">
   Registration page Preview
 </p>
-<img src="[here add photo]">  
+<img src="public/images/appPreview/register.jpeg">  
 </td>
 </table>
 
@@ -74,16 +74,36 @@ npm install
 &nbsp; 
 <br>
 <p align="center">
-    Form Summary page Preview
+    Home page Preview (Light mode)
 </p>
 </p>
-<img src="[here add photo]">
+<img src="public/images/appPreview/lightMode.jpeg">
 </td> 
 <td width="50%">
 <br>
 <p align="center">
-  Study Journey Page Preview
+  Home page Preview (Dark mode)
 </p>
-<img src="[here add photo]">  
+<img src="public/images/appPreview/darkMode.jpeg">  
+</td>
+</table>
+
+<table width="100%"> 
+<tr>
+<td width="50%">      
+&nbsp; 
+<br>
+<p align="center">
+  Card firt part
+</p>
+</p>
+<img src="public/images/appPreview/CardFirstPart.jpeg">  
+</td> 
+<td width="50%">
+<br>
+<p align="center">
+  Card second part
+</p>
+<img src="public/images/appPreview/cardSecondPart.jpeg">  
 </td>
 </table>
