@@ -207,7 +207,6 @@
     })();
 
     const feedCreate = (function () {
-
         function createCardGrid(data) {
             const {fragment, rowOutCard} = feedCreate.createOutlineGrid();
             // Iterate over the data in reverse order
@@ -427,7 +426,7 @@
         }
 
         function postComment(commentTxt){
-            commentsUpdate("/home/comments", "POST", {date: currImgDate, text: commentTxt});
+            commentsUpdate("/home/comments", "POST", {date: currImgDate, text: commentTxt, user_id:selectors.userId});
         }
 
         function printComments(listComments) {
@@ -437,17 +436,30 @@
             listComments.forEach((comment) => {
                 const {col1, col2} = commentsCreate.cols(row);
 
-                col1.appendChild(commentsCreate.card("add user name", comment.text, comment.id));
+                col1.appendChild(commentsCreate.card(`${comment.User.firstName} ${comment.User.lastName}`, comment.text, comment.id));
 
-                if (comment.email === selectors.userEmail) {
+                if (comment.user_id === selectors.userId) {
                     col2.appendChild(commentsCreate.deleteIcon(comment.id, comment.text, deleteComment));
                 }
             });
             selectors.comments.appendChild(container);
         }
 
-        function deleteComment(id, text) {
-            commentsUpdate("/home/comments", "DELETE", {date: currImgDate, id, text});
+        function deleteComment(commentId, text) {
+            commentsUpdate("/home/comments", "DELETE", {date: currImgDate, commentId, text, user_id:selectors.userId});
+        }
+
+        function getDateComments() {
+            fetchHandlers.initCommentFetch(currImgDate);
+            selectors.modalSpiner.classList.remove("d-none");
+
+            fetch(`/home/comments?date=${currImgDate}`)
+                .then(fetchHandlers.checkResponse)
+                .then(fetchHandlers.getJson)
+                .then((data) => printComments(data))
+                .then(() => selectors.modalSpiner.classList.add("d-none"))
+                .then(lastPollTimestamp = date.currTime())
+                .catch((error) => fetchHandlers.handleErrorComments(error));
         }
 
         function commentsUpdate(url, method, bodyData) {
@@ -466,24 +478,10 @@
                 .catch((error) => fetchHandlers.handleErrorComments(error));
         }
 
-        function getDateComments() {
-
-            fetchHandlers.initCommentFetch(currImgDate);
-            selectors.modalSpiner.classList.remove("d-none");
-
-            fetch(`/home/comments?date=${currImgDate}`)
-                .then(fetchHandlers.checkResponse)
-                .then(fetchHandlers.getJson)
-                .then((data) => printComments(data))
-                .then(() => selectors.modalSpiner.classList.add("d-none"))
-                .then(lastPollTimestamp = date.currTime())
-                .catch((error) => fetchHandlers.handleErrorComments(error));
-        }
-
         function pollComments() {
             fetchHandlers.initCommentFetch(currImgDate);
 
-            fetch(`/home/poll-comments/?date=${currImgDate}&lastPollTimestamp=${lastPollTimestamp}&email=${selectors.userEmail}`)
+            fetch(`/home/poll-comments/?date=${currImgDate}&lastPollTimestamp=${lastPollTimestamp}&user_id=${selectors.userId}`)
                 .then(fetchHandlers.checkResponse)
                 .then(fetchHandlers.getJson)
                 .then((data) => pollHandler(data))
@@ -530,12 +528,12 @@
         commentModalTitle: document.getElementById("comment-title"),
         modalSpiner: document.getElementById("modalLoading"),
         modalComments: document.getElementById("myModal"),
+        userId: parseInt(document.getElementById("user_id").textContent),
         userName: document.getElementById("userName").textContent.trim(),
         userEmail: document.getElementById("userEmail").textContent.trim(),
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-
         bookPage.init();
 
         document.getElementById("dateFormSubmit").addEventListener("click", bookPage.changeDate);

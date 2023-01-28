@@ -1,3 +1,14 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<%- include('includes/head.ejs') %>
+<link rel='stylesheet' href='/stylesheets/loginStyle.css' />
+</head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+<body style="background-image: url('/images/404.jpg'); background-size: cover;">
+
+<div class="container text-center text-while">
+    <h5 class="text-white text-center"> THERE IS A PROBLEM IN THE DATA BASE OR SERVER <br>
+                                  YOU CAN TRY AGAN, WE CANT PROMSE IT WILL WORK :)</h5>
+    <a href="/" class="btn btn-primary btn-lg px-5 text-white">Back To Home</a>
+</div>
+</body>
+<%- include('includes/end.ejs') %>

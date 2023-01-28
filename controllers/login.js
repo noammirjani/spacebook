@@ -1,7 +1,6 @@
 const db = require("../models");
 const cookies = require("./cookies");
-
-const COOKIE_ERROR = "error";
+const access = require("./checkAccess");
 const COOKIE_REGISTER = "register";
 
 /**
@@ -35,6 +34,7 @@ function renderLoginPage(req, res, errMsg) {
  * @param {Object} user - User object
  */
 function updateSessionData(req, res, user) {
+	req.session.user_id = user.id;
 	req.session.userName = user.firstName + " " + user.lastName;
 	req.session.email = user.email;
 	req.session.isLoggedIn = true;
@@ -48,6 +48,7 @@ function updateSessionData(req, res, user) {
 exports.enterHomePage = async (req, res) => {
 	try {
 		let { email, password } = req.body;
+
 		email = email.toLowerCase();
 		if (!email || !password) {
 			throw new Error("SORRY - data was not found, try again");
@@ -61,8 +62,12 @@ exports.enterHomePage = async (req, res) => {
 		user.comparePasswords(password);
 		updateSessionData(req, res, user);
 		res.redirect("/home");
-	} catch (error) {
+	}
+	catch (err) {
 		//   res.cookie(COOKIE_ERROR, error.message);
-		renderLoginPage(req, res, error.message);
+		if(access.SequelizeFatalError(err))
+			res.render('error', {title:"error - please try later"})
+		else
+			renderLoginPage(req, res, err.message);
 	}
 };

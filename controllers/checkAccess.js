@@ -1,3 +1,4 @@
+const {Sequelize} = require("sequelize");
 /**
  * Check if the user is logged in, if so, continue to the next middleware function.
  * If not, render the login page with an error message.
@@ -7,7 +8,9 @@
  * @param {function} next - The next middleware function
  */
 exports.checkLogin = (req, res, next) => {
-	if (req.session.isLoggedIn) next();
+	if (req.session.isLoggedIn) {
+		next();
+	}
 	else {
 		if (!req.cookies.connect) {
 			res.render("index", {
@@ -49,3 +52,16 @@ exports.nocache = (req, res, next) => {
 	res.header("Cache-Control", "no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0,max-age=0,s-maxage=0");
 	next();
 };
+
+
+/** 'SequelizeFatalError'
+ * @function
+ * @param {Object} err
+ * @return {boolean}
+ */
+exports.SequelizeFatalError = (err) => {
+	if( err instanceof Sequelize.DatabaseError   ||
+		err instanceof Sequelize.ConnectionError)
+		return true;
+	return false;
+}

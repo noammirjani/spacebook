@@ -1,6 +1,7 @@
 const db = require("../models");
 const cookies = require("./cookies");
 const Sequelize = require("sequelize");
+const access = require("./checkAccess");
 
 //const variables
 const COOKIE_ERROR = "error";
@@ -99,11 +100,18 @@ const setNewUserCookie = (req, res, data) => {
  */
 const createUser = async (firstName, lastName, email, password, res) => {
 	try {
+		email = email.toLowerCase();
+		firstName = firstName.toLowerCase();
+		lastName = lastName.toLowerCase();
+
 		await db.User.create({ firstName, lastName, email, password });
 		res.cookie(COOKIE_REGISTER, "New user was registered successfully!");
 		res.clearCookie(COOKIE_USER);
-	} catch (error) {
-		if (error instanceof Sequelize.ValidationError) throw error;
+	}
+	catch (error) {
+		if(access.SequelizeFatalError(error))
+			res.render('error', {title:"error - please try later"})
+		else if (error instanceof Sequelize.ValidationError) throw error;
 		else res.render("error", { error: error.msg });
 	}
 };
@@ -119,8 +127,11 @@ const registerNewUser = async (password, req, res) => {
 		let { email, firstName, lastName } = cookies.getCookieData(req, COOKIE_USER);
 		await createUser(firstName, lastName, email, password, res);
 		res.redirect("/");
-	} catch (error) {
-		checkTimeExpiredAndRender(req, res, error.message);
+	}
+	catch (error) {
+		if(access.SequelizeFatalError(error))
+			res.render('error', {title:"error - please try later"})
+		else checkTimeExpiredAndRender(req, res, error.message);
 	}
 };
 
@@ -138,9 +149,7 @@ function renderRegister(req, res, userObj = undefined, errMsg = undefined) {
 	res.render("register", {
 		title: "register",
 		error: errMsg || cookies.getCookieText(req, res, COOKIE_ERROR),
-		email,
-		firstName,
-		lastName,
+		email, firstName, lastName,
 	});
 }
 

@@ -1,7 +1,6 @@
 'use strict';
 
 const {Model, Error} = require('sequelize');
-const Comment = require("./comment")
 const bcrypt = require('bcrypt');
 const ROUNDS = 10; //define the complexity of the encryption
 
@@ -20,9 +19,8 @@ module.exports = (sequelize, DataTypes) => {
          * @param {Object} models - The models object that contains all the defined models.
          */
         static associate(models) {
-            User.hasMany(models.Comment, {
-                foreignKey:'user_id'
-            });
+            // define association here
+            User.hasMany(models.Comments, {foreignKey: 'user_id'});
         }
     }
 
@@ -64,7 +62,7 @@ module.exports = (sequelize, DataTypes) => {
     sequelize.addHook('beforeValidate', (user) => {
         // user.firstName = user.firstName.toLowerCase();
         // user.lastName = user.lastName.toLowerCase();
-        user.email = user.email.toLowerCase();
+       // user.email = user.email.toLowerCase();
     });
 
     /**
