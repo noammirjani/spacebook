@@ -8,17 +8,14 @@
 }
 
 body {
-    /*background-image: url(../images/login-page-bg.jpg);*/
-    /*background-size: cover;*/
-    /*background-repeat: repeat;*/
-    /*background-attachment: fixed;*/
-    /*height: 100%;*/
-    background-color: rgba(189, 145, 145, 0.9) !important;
+    background-image: url("../images/dark-mode.jpg");
+    background-size: cover;
+    background-repeat: repeat;
+    background-attachment: fixed;
+    height: 100%;
+
 }
 
-.card-login {
-    background-color: rgba(0, 0, 0, 0.5) !important;
-}
 
 .card-img-header {
     height: 20vh;
@@ -51,6 +48,6 @@ body {
 }
 
 .deleteComment {
-    height: 20px;
-    width: 20px;
+    height: 30px;
+    width: 30px;
 }

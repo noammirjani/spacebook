@@ -1,4 +1,4 @@
-exports.checkLogin = (req, res, next) => {
+exports.checkLogin  = (req, res, next) => {
     if(req.session.isLoggedIn)
         next();
     else {
@@ -24,7 +24,8 @@ exports.checkLogout = (req,res, next) => {
     }
 }
 
-exports.nocache = (req, res, next) => {
+exports.nocache     = (req, res, next) => {
     res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0,max-age=0,s-maxage=0');
     next();
 }
+

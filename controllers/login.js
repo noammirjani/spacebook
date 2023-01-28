@@ -43,7 +43,6 @@ function updateSessionData(req, res, user) {
 exports.enterHomePage = async (req, res) => {
 
     try {
-        console.log("in enter home page!")
         let {email, password} = req.body;
         email = email.toLowerCase();
         if(!email || !password) throw new Error("SORRY - data was not found, try again");

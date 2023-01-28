@@ -7,7 +7,9 @@
                 return Promise.resolve(response);
             } else {
                 return response.json().then((data) => {
-                    return Promise.reject(new Error(`${data.code}<br><br>${data.msg || data.message}`));
+                    console.log(data.code)
+                    const error = new Error(`${data.code}<br><br>${data.msg || data.message}`);
+                    return Promise.reject(error);
                 });
             }
         }
@@ -17,7 +19,6 @@
         }
 
         function handleErrorLoad(error) {
-            comments.closeCommentsModal();
             selectors.dateErrorMsg.innerHTML  = `Looks like there was a problem.<br><br> Status Code: ${error.message}
                                                 <br><br> you can try load again the feed`;
             selectors.dateErrorMsg.classList.remove("d-none");
@@ -28,6 +29,22 @@
         function handleErrorScroll() {
             selectors.scrollButton.classList.add("d-none");
             selectors.endOfScroll.classList.remove("d-none");
+        }
+
+        function handleErrorComments(error){
+            selectors.comments.innerHTML = "";
+            if(error.message.includes('Unexpected token')) {
+                selectors.modalSpiner.classList.remove('d-none');
+                selectors.commentsErrorMsg.innerHTML = 'Your session has expired. \n Please log in again to continue ' +
+                                                        'using the app \n\n We had a lot of fun and hope to see you soon!';
+                setTimeout(() => { location.href = '/'}, 4000)
+            }
+            else {
+                selectors.commentsErrorMsg.innerHTML = `Looks like there was a problem... <br><br> 
+                                                        ${error.message} <br><br>  Please try again later`;
+                selectors.modalSpiner.classList.add("d-none");
+            }
+            selectors.commentsErrorMsg.classList.remove("d-none");
         }
 
         function startSpiner() {
@@ -53,6 +70,7 @@
             startSpiner: startSpiner,
             stopSpiner: stopSpiner,
             initCommentFetch: initCommentFetch,
+            handleErrorComments:handleErrorComments,
         };
     })();
 
@@ -86,8 +104,6 @@
         }
 
         function checkPatternDates(startDate, endDate) {
-            console.log(startDate, endDate)
-
             if (!isValid(startDate) || !isValid(endDate)) {
                 fetchHandlers.handleErrorLoad("date pattern is not valid, <br> enter new date type 'YYYY-MM-DD'");
                 return false;
@@ -151,35 +167,9 @@
         }
 
         function presentData(responseData, startDate) {
-            createCardGrid(responseData);
+            feedCreate.createCardGrid(responseData);
             currEndDate = date.prev(startDate);
             selectors.scrollButton.classList.remove("d-none");
-        }
-
-        function createCardGrid(data) {
-            const {fragment, rowOutCard} = feedCreate.createOutlineGrid();
-
-            // Iterate over the data in reverse order
-            for (const imgData of Object.values(data).reverse()) {
-                const {colOutCard, col1, col2} = feedCreate.createInnerGrid();
-
-                if (imgData.media_type == "image")
-                    col1.appendChild(feedCreate.createImage(imgData.url, imgData.date));
-                else col1.appendChild(feedCreate.createVideo(imgData.url));
-
-                // Create the card header, body, and footer elements
-                const {cardHeader, cardBody, cardFooter} = feedCreate.createDataGrid(col2);
-
-                // Create the card data
-                cardHeader.appendChild(feedCreate.createCardTitle(imgData.title));
-                cardBody.appendChild(feedCreate.createCardText(imgData.explanation));
-                cardFooter.appendChild(feedCreate.createCardDate(imgData.date));
-                cardFooter.appendChild(feedCreate.createCopyRight(imgData.copyright));
-                cardFooter.appendChild(feedCreate.commentTextBox(imgData.date));
-
-                rowOutCard.appendChild(colOutCard);
-            }
-            selectors.mainContainer.appendChild(fragment);
         }
 
         function changeDate(event) {
@@ -200,15 +190,45 @@
             }
         }
 
+        function changeBg(event){
+            if (event.target.checked) {
+                document.body.style.backgroundImage = `url(../images/dark-mode.jpg)`;
+            } else {
+                document.body.style.backgroundImage = `url(../images/light-mode.jpeg)`;
+            }
+        }
+
         return {
             init: initPage,
             changeDate: changeDate,
             handleScroll: scroll,
+            changeBg:changeBg,
         };
-
     })();
 
     const feedCreate = (function () {
+
+        function createCardGrid(data) {
+            const {fragment, rowOutCard} = feedCreate.createOutlineGrid();
+            // Iterate over the data in reverse order
+            for (const imgData of Object.values(data).reverse()) {
+                const {colOutCard, col1, col2} = feedCreate.createInnerGrid();
+
+                if (imgData.media_type == "image")
+                    col1.appendChild(feedCreate.createImage(imgData.url, imgData.date));
+                else col1.appendChild(feedCreate.createVideo(imgData.url));
+
+                const {cardHeader, cardBody, cardFooter} = feedCreate.createDataGrid(col2);
+                // Create the card data
+                cardHeader.appendChild(feedCreate.createCardTitle(imgData.title));
+                cardBody.appendChild(feedCreate.createCardText(imgData.explanation));
+                cardFooter.appendChild(feedCreate.createCardDate(imgData.date));
+                cardFooter.appendChild(feedCreate.createCopyRight(imgData.copyright));
+                cardFooter.appendChild(feedCreate.commentTextBox(imgData.date));
+                rowOutCard.appendChild(colOutCard);
+            }
+            selectors.mainContainer.appendChild(fragment);
+        }
         function createInnerGrid() {
             const colOutCard = document.createElement("div");
             colOutCard.className = "col";
@@ -228,7 +248,6 @@
 
             return {colOutCard, card, rowInCard, col1, col2};
         }
-
         function commentTextBox(date) {
             const cmdButton = document.createElement("button");
             cmdButton.className = "btn btn-outline-dark mr-2 cmdBtn";
@@ -241,14 +260,12 @@
             });
             return cmdButton;
         }
-
         function createCopyRight(copyright) {
             const copyRight = document.createElement("div");
             copyRight.classList.add("text-center", "text-muted", "text-small");
             copyRight.innerHTML = copyright ? `Copyright &copy; ${copyright}` : '<br>';
             return copyRight;
         }
-
         function createImage(url, date) {
             const img = document.createElement("img");
             img.className = "img-fluid col-img";
@@ -259,43 +276,36 @@
             img.style.height = "550px";
             return img;
         }
-
         function createVideo(url) {
             const ratio = document.createElement("div");
             ratio.setAttribute("class", "ratio ratio-1x1 col-img");
-
             // Create an iframe element
             let iframe = document.createElement("iframe");
             iframe.src = url;
             iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
             iframe.allowfullscreen = true;
-
             ratio.style.height = "550px";
             ratio.appendChild(iframe);
             return ratio;
         }
-
         function createCardTitle(title) {
             const cardTitle = document.createElement("h6");
             cardTitle.className = "card-title display-6";
             cardTitle.innerHTML = `${title}`;
             return cardTitle;
         }
-
         function createCardText(explanation) {
             const cardText = document.createElement("p");
             cardText.className = "card-text";
             cardText.innerHTML = explanation;
             return cardText;
         }
-
         function createCardDate(date) {
             const cardDate = document.createElement("small");
             cardDate.className = "text-center text-muted";
             cardDate.innerHTML = `${date}`;
             return cardDate;
         }
-
         function createDataGrid(col) {
             const cardHeader = document.createElement("div");
             cardHeader.classList.add("card-header", "card-img-header");
@@ -308,7 +318,6 @@
             col.appendChild(cardFooter);
             return {cardHeader, cardBody, cardFooter};
         }
-
         function createOutlineGrid() {
             const fragment = document.createDocumentFragment();
             const rowOutCard = document.createElement("div");
@@ -316,7 +325,6 @@
             fragment.appendChild(rowOutCard);
             return {fragment, rowOutCard};
         }
-
         return {
             commentTextBox: commentTextBox,
             createCopyRight: createCopyRight,
@@ -328,6 +336,7 @@
             createDataGrid: createDataGrid,
             createInnerGrid: createInnerGrid,
             createOutlineGrid: createOutlineGrid,
+            createCardGrid:createCardGrid
         };
     })();
 
@@ -362,73 +371,23 @@
             return {col1, col2};
         }
 
-        function createUserIcon() {
-            const avatar = document.createElement("img");
-            avatar.src = "images/user.jpg";
-            avatar.alt = "avatar";
-            avatar.style.width = "25px";
-            avatar.style.height = "25px";
-            return avatar;
-        }
-
-        function createUserNameText(name) {
-            const username = document.createElement("p");
-            username.className = "small mb-0 ms-2 h6 text-primary";
-            username.textContent = name;
-            return username;
-        }
-
-        function createUserCommentText(txt) {
-            const commentText = document.createElement("p");
-            commentText.className = "text-break px-2";
-            commentText.textContent = txt;
-            return commentText;
-        }
-
-        function createFlexCard() {
+        function createCommentCard(name, txt) {
             const card = document.createElement("div");
             card.classList.add("card", "mb-1");
-            const cardBody = document.createElement("div");
-            cardBody.className = "card-body";
-
-            const justifyContentBetween = document.createElement("div");
-            justifyContentBetween.className = "justify-content-between";
-            const flexRow = document.createElement("div");
-            flexRow.className = "row align-items-center justify-content-center my-auto";
-
-            justifyContentBetween.appendChild(flexRow);
-            cardBody.appendChild(justifyContentBetween);
-            card.appendChild(cardBody);
-            return {flexRow, card};
-        }
-
-        function create3cols(flexRow) {
-            const col1 = document.createElement("div");
-            col1.classList.add("col-1");
-            flexRow.appendChild(col1);
-
-            const col2 = document.createElement("div");
-            col2.classList.add("col-3");
-            flexRow.appendChild(col2);
-
-            const col3 = document.createElement("div");
-            col3.classList.add("col");
-            flexRow.appendChild(col3);
-            return {col1, col2, col3};
-        }
-
-        function commentCard(txt, name) {
-            const {flexRow, card} = createFlexCard();
-            const {col1, col2, col3} = create3cols(flexRow);
-            col1.appendChild(createUserIcon());
-            col2.appendChild(createUserNameText(name));
-            col3.appendChild(createUserCommentText(txt));
+            card.innerHTML = `
+                             <div class="card-body d-flex justify-content-between align-items-center">
+                                 <div class="d-flex align-items-center">
+                                       <img src="images/user.jpg" alt="avatar" style="width: 25px; height: 25px;">
+                                        <p class="small mb-0 ms-2 h6 text-primary">${name}</p>
+                                 </div>
+                                  <div class="text-break px-2">${txt}</div>
+                             </div> `;
             return card;
         }
         return {
             deleteIcon: createDeleteIcon,
             grid: createGrid,
-            card: commentCard,
+            card: createCommentCard,
             cols: createCols,
         };
     })();
@@ -438,14 +397,10 @@
         const maxChars = 128;
         const sendComment = 13;
 
-        function closeModal() {
-            selectors.modalSpiner.classList.add("d-none");
-            selectors.commentsErrorMsg.innerHTML = "Looks like there was a problem..."
-        }
-
         function initModal(imgElement) {
             currImgDate = imgElement;
-            selectors.commentTextBox.value = selectors.commentsErrorMsg.innerText = "";
+            selectors.commentTextBox.value = "";
+            selectors.commentsErrorMsg.classList.add("d-none");
             selectors.commentModalTitle.innerText = getTitle();
             getDateComments();
         }
@@ -476,14 +431,13 @@
         }
 
         function printComments(listComments) {
-            document.getElementById("comments").innerHTML = "";
-
+            selectors.comments.innerHTML = "";
             let {container, row} = commentsCreate.grid();
 
             listComments.forEach((comment) => {
                 const {col1, col2} = commentsCreate.cols(row);
 
-                col1.appendChild(commentsCreate.card(comment.text, "add user name"));
+                col1.appendChild(commentsCreate.card("add user name", comment.text, comment.id));
 
                 if (comment.email === selectors.userEmail) {
                     col2.appendChild(commentsCreate.deleteIcon(comment.id, comment.text, deleteComment));
@@ -509,7 +463,7 @@
                 .then(getDateComments)
                 .then(() => selectors.modalSpiner.classList.add("d-none"))
                 .then(() => lastPollTimestamp = date.currTime())
-                .catch(fetchHandlers.handleErrorLoad);
+                .catch((error) => fetchHandlers.handleErrorComments(error));
         }
 
         function getDateComments() {
@@ -523,7 +477,7 @@
                 .then((data) => printComments(data))
                 .then(() => selectors.modalSpiner.classList.add("d-none"))
                 .then(lastPollTimestamp = date.currTime())
-                .catch(fetchHandlers.handleErrorLoad);
+                .catch((error) => fetchHandlers.handleErrorComments(error));
         }
 
         function pollComments() {
@@ -533,7 +487,7 @@
                 .then(fetchHandlers.checkResponse)
                 .then(fetchHandlers.getJson)
                 .then((data) => pollHandler(data))
-                .catch((error) => fetchHandlers.handleErrorLoad(error));
+                .catch((error) => fetchHandlers.handleErrorComments(error));
         }
 
         function pollHandler(data){
@@ -556,7 +510,6 @@
         }
 
         return {
-            closeCommentsModal: closeModal,
             initModal: initModal,
             type: commentTyping,
             startPolling:startPolling,
@@ -594,5 +547,7 @@
         document.getElementById("myModal").addEventListener("hide.bs.modal", comments.stopPolling);
 
         document.getElementById("myModal").addEventListener("show.bs.modal", comments.startPolling);
+
+        document.getElementById('switchMode').addEventListener('change', bookPage.changeBg);
      })
 })();

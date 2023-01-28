@@ -39,7 +39,7 @@ app.use(access.nocache);
 app.use('/home', access.checkLogin, apiRouter);
 app.use('/', access.checkLogout, loginRouter);
 app.use('/register', access.checkLogout, registerRouter);
-// app.use('/login', checkLogout, loginRouter);
+app.use('/login',access.checkLogout, loginRouter);
 
 module.exports = app;
 
