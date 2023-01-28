@@ -1,5 +1,5 @@
 const db = require("../models");
-const cookies = require("./cookies");
+const cookies = require("./cookiesHandler");
 const access = require("./checkAccess");
 const COOKIE_REGISTER = "register";
 
@@ -11,6 +11,7 @@ const COOKIE_REGISTER = "register";
 exports.renderLoginPage = (req, res) => {
 	renderLoginPage(req, res);
 };
+
 
 /**
  * Renders the login page and sends an error message if one exists.
@@ -27,6 +28,7 @@ function renderLoginPage(req, res, errMsg) {
 	});
 }
 
+
 /**
  * updateSessionData - update the Session data
  * @param {Object} req - Express request object
@@ -39,6 +41,7 @@ function updateSessionData(req, res, user) {
 	req.session.email = user.email;
 	req.session.isLoggedIn = true;
 }
+
 
 /**
  * enterHomePage - logs in a user and renders the api page

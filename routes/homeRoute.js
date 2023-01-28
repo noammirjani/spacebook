@@ -1,6 +1,5 @@
 const express = require("express");
-const apiController = require("../controllers/api");
-const loginController = require("../controllers/login");
+const homeController = require("../controllers/homeController");
 const router = express.Router();
 
 /**
@@ -9,7 +8,7 @@ const router = express.Router();
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-router.get("/", apiController.getApp);
+router.get("/", homeController.getApp);
 
 /**
  * Handle GET request for logout
@@ -17,7 +16,7 @@ router.get("/", apiController.getApp);
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-router.get("/logout", apiController.logOut);
+router.get("/logout", homeController.logOut);
 
 /**
  * Handle GET request for comments
@@ -25,7 +24,7 @@ router.get("/logout", apiController.logOut);
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-router.get("/comments", apiController.getComments);
+router.get("/comments", homeController.getComments);
 
 /**
  * Handle GET request for poll comments
@@ -33,7 +32,7 @@ router.get("/comments", apiController.getComments);
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-router.get("/poll-comments", apiController.pollComments);
+router.get("/poll-comments", homeController.pollComments);
 
 /**
  * Handle POST request for comments
@@ -41,7 +40,7 @@ router.get("/poll-comments", apiController.pollComments);
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-router.post("/comments", apiController.postComment);
+router.post("/comments", homeController.postComment);
 
 /**
  * Handle DELETE request for comments
@@ -49,6 +48,6 @@ router.post("/comments", apiController.postComment);
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-router.delete("/comments", apiController.deleteComment);
+router.delete("/comments", homeController.deleteComment);
 
 module.exports = router;

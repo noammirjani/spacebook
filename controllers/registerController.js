@@ -1,5 +1,5 @@
 const db = require("../models");
-const cookies = require("./cookies");
+const cookies = require("./cookiesHandler");
 const Sequelize = require("sequelize");
 const access = require("./checkAccess");
 
@@ -8,6 +8,7 @@ const COOKIE_ERROR = "error";
 const COOKIE_REGISTER = "register";
 const COOKIE_USER = "newUser";
 const COOKIE_MAX_AGE = 30 * 1000;
+
 
 /**
  * enterToRegisterPage - handle the get request for the register page.
@@ -35,14 +36,23 @@ exports.getRegisterPasswordsPage = (req, res) => {
 	checkTimeExpiredAndRender(req, res);
 };
 
+
+/**
+ *  A function that checks if the time on a user's cookie has expired and renders the appropriate page.
+ *  @function checkTimeExpiredAndRender
+ *   @param {Object} req - The request object from the client.
+ *  @param {Object} res - The response object to be sent to the client.
+ *  @param {string} [errMsg] - An optional error message to be displayed on the rendered page.
+ */
 function checkTimeExpiredAndRender(req, res, errMsg = undefined) {
 	if (cookies.isCookieExists(req, COOKIE_USER)) renderRegisterPasswords(req, res, errMsg);
 	else {
-		if (cookies.isCookieExists(req, COOKIE_ERROR) || errMsg) res.cookie(COOKIE_ERROR, "your time expired");
-
-		res.redirect("/register");
+		if (cookies.isCookieExists(req, COOKIE_ERROR) || errMsg)
+			res.cookie(COOKIE_ERROR, "your time expired");
+		else res.redirect("/register");
 	}
 }
+
 
 /**
  * postLogin - handle the post request for the login page.
@@ -73,9 +83,11 @@ exports.userBaseDataEntered = async (req, res) => {
 		if (emailExists) {
 			throw new Error("Email already in use");
 		}
+
 		setNewUserCookie(req, res, { email, firstName, lastName });
 		res.redirect("/register/register-passwords");
-	} catch (error) {
+	}
+	catch (error) {
 		renderRegister(req, res, undefined, error.message);
 	}
 };
@@ -116,6 +128,7 @@ const createUser = async (firstName, lastName, email, password, res) => {
 	}
 };
 
+
 /**
  * registerNewUser - registers a new user
  * @param {string} password
@@ -135,6 +148,7 @@ const registerNewUser = async (password, req, res) => {
 	}
 };
 
+
 //--- RENDER FUNCTIONS ----//
 /**
  * renderRegister - displays the register page.
@@ -144,14 +158,15 @@ const registerNewUser = async (password, req, res) => {
  */
 function renderRegister(req, res, userObj = undefined, errMsg = undefined) {
 	if (errMsg) cookies.clear(req, res, COOKIE_ERROR);
-
 	const { email, firstName, lastName } = userObj || { undefined };
+
 	res.render("register", {
 		title: "register",
 		error: errMsg || cookies.getCookieText(req, res, COOKIE_ERROR),
 		email, firstName, lastName,
 	});
 }
+
 
 /**
  * renderRegisterPasswords - displays the register-passwords page.
@@ -168,6 +183,7 @@ function renderRegisterPasswords(req, res, errMsg = undefined) {
 		error: errMsg || cookies.getCookieText(req, res, COOKIE_ERROR) || "",
 	});
 }
+
 
 /**
  * Handle an error when trying to enter a page

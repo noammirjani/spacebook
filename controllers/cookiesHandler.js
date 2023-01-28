@@ -12,6 +12,7 @@ exports.getCookieText = (req, res, key) => {
 	return text;
 };
 
+
 /**
  * getCookieData - gets the data stored in the user cookie as string
  * @param {Object} req - Express request object
@@ -26,6 +27,7 @@ exports.getCookieData = (req, cookieKey) => {
 	throw new Error("your time expired");
 };
 
+
 /**
  * Check if a cookie exists in the request
  * @param {Object} req - The request object
@@ -35,6 +37,7 @@ exports.getCookieData = (req, cookieKey) => {
 exports.isCookieExists = (req, cookieKey) => {
 	return !!req.cookies[cookieKey];
 };
+
 
 /**
  * Clear a cookie from the response

@@ -38,21 +38,8 @@ exports.postComment = async (req, res) => {
 		res.status(201).json({ msg: "comment posted" });
 	}
 	catch(error) {
-		catchError(req,res, error, "failed to post");
+		catchError(req, res, error, "failed to post");
 	}
-	//	user_id = req.session.user_id;
-	// 	db.Comments.build({
-	// 		user_id: user_id,
-	// 		date: date,
-	// 		text: text,
-	// 	})
-	// 		.save()
-	// 		.then((() => {res.status(201).json({msg: "comment posted"})}))
-	// 		.catch(error => {
-	//
-	// 			}
-	// 		)
-	// }
 };
 
 
@@ -99,6 +86,15 @@ function catchError(req,res,error, str="wanted mission failed"){
 }
 
 
+/**
+ * Retrieves all comments that were created or updated after the specified time, on the specified date, and not created by the specified user.
+ * @function getUpdates
+ * @async
+ * @param {Date} time - The time to retrieve comments after
+ * @param {Date} date - The date to retrieve comments from
+ * @param {number} user - The ID of the user to exclude from the retrieved comments
+ * @returns {Promise<Array>} - A promise that resolves to an array of comments that match the specified criteria
+ */
 async function getUpdates(time,date,user){
 	return await db.Comments.findAll({
 		paranoid: false,
@@ -112,12 +108,40 @@ async function getUpdates(time,date,user){
 }
 
 
+/**
+ * Retrieves all comments on the specified date, including the user's first and last name who created the comment
+ * @function getCommentsByDate
+ * @async
+ * @param {Date} date - The date to retrieve comments from
+ * @returns {Promise<Array>} - A promise that resolves to an array of comments that match the specified criteria
+ */
 async function getCommentsByDate(date){
 	const temp =  await db.Comments.findAll({ where: { date },
 		include: [{model: db.User, attributes:['firstName', 'lastName']}]
 	});
 	return temp;
 }
+
+
+/**
+ * Sends a JSON response containing a boolean indicating whether there are updates, an array of comments, the time of the most recent update, and the number of modifications
+ * @function sendPollResponse
+ * @param {Object} res - The response object from the Express.js server
+ * @param {number} code - The HTTP status code for the response
+ * @param {boolean} isUpdate - A boolean indicating whether there are updates
+ * @param {Array} comments - An array of comments
+ * @param {Date} updateTime - The time of the most recent update
+ * @param {number} modifyCount - The number of modifications
+ */
+function sendPollResponse(res, code, isUpdate, comments, updateTime, modifyCount){
+	res.status(code).json({
+		isUpdate: isUpdate,
+		comments: comments,
+		updateTime: updateTime,
+		amount: modifyCount
+	});
+}
+
 
 
 /**
@@ -157,18 +181,6 @@ exports.pollComments = async (req, res) => {
 		catchError(req,res, error);
 	}
 };
-
-
-function sendPollResponse(res, code, isUpdate, comments, updateTime, modifyCount){
-	res.status(code).json({
-		isUpdate: isUpdate,
-		comments: comments,
-		updateTime: updateTime,
-		amount: modifyCount
-});
-}
-
-
 
 
 /**

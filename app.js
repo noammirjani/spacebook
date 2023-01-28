@@ -4,14 +4,11 @@ let cookieParser = require('cookie-parser');
 let logger       = require('morgan');
 const session    = require('express-session');
 let access       = require('./controllers/checkAccess');
-let createError  = require('http-errors');
-let fs           = require('fs');
-const { Sequelize } = require('sequelize');
 
 
-let registerRouter = require('./routes/register'); //register
-let loginRouter    = require('./routes/login');       //login
-let apiRouter = require('./routes/api'); //comments
+let registerRouter = require('./routes/registerRoute'); //register
+let loginRouter    = require('./routes/loginRoute');       //login
+let apiRouter = require('./routes/homeRoute'); //comments
 
 
 let app = express();

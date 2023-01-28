@@ -1,11 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const registerController = require("../controllers/registerController");
 
-const registerController = require("../controllers/register");
-const loginController = require("../controllers/login");
 
 /* GET */
-
 /**
  * Renders the registration page.
  * @function
@@ -22,8 +20,8 @@ router.get("/", registerController.enterToRegisterPage);
  */
 router.get("/register-passwords", registerController.getRegisterPasswordsPage);
 
-/* POST */
 
+/* POST */
 /**
  * Handles an error in the registration process.
  * @function
