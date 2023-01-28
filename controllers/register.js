@@ -51,8 +51,9 @@ function checkTimeExpiredAndRender(req, res, errMsg = undefined) {
 exports.userEnteredPasswords = (req, res) => {
 	const { password, confirmPassword } = req.body;
 
-	if (password === confirmPassword) registerNewUser(password, req, res).then();
-	else {
+	if (password === confirmPassword) {
+		registerNewUser(password, req, res).then();
+	} else {
 		checkTimeExpiredAndRender(req, res, "passwords do not match");
 	}
 };
@@ -68,7 +69,9 @@ exports.userBaseDataEntered = async (req, res) => {
 	try {
 		const emailExists = await db.User.findOne({ where: { email: email.toLowerCase() } });
 
-		if (emailExists) throw new Error("Email already in use");
+		if (emailExists) {
+			throw new Error("Email already in use");
+		}
 		setNewUserCookie(req, res, { email, firstName, lastName });
 		res.redirect("/register/register-passwords");
 	} catch (error) {
@@ -147,7 +150,9 @@ function renderRegister(req, res, userObj = undefined, errMsg = undefined) {
  * @param {Object} req - Express response object
  */
 function renderRegisterPasswords(req, res, errMsg = undefined) {
-	if (errMsg) cookies.clear(req, res, COOKIE_ERROR);
+	if (errMsg) {
+		cookies.clear(req, res, COOKIE_ERROR);
+	}
 
 	res.render("register-passwords", {
 		title: "register-passwords",

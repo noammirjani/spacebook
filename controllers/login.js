@@ -49,10 +49,14 @@ exports.enterHomePage = async (req, res) => {
 	try {
 		let { email, password } = req.body;
 		email = email.toLowerCase();
-		if (!email || !password) throw new Error("SORRY - data was not found, try again");
+		if (!email || !password) {
+			throw new Error("SORRY - data was not found, try again");
+		}
 
 		const user = await db.User.findOne({ where: { email } });
-		if (!user) throw new Error("email is not found, please register");
+		if (!user) {
+			throw new Error("email is not found, please register");
+		}
 
 		user.comparePasswords(password);
 		updateSessionData(req, res, user);

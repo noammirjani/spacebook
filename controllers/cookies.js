@@ -6,7 +6,9 @@
  */
 exports.getCookieText = (req, res, key) => {
 	const text = req.cookies[key];
-	if (text) res.clearCookie(key);
+	if (text) {
+		res.clearCookie(key);
+	}
 	return text;
 };
 
@@ -18,7 +20,9 @@ exports.getCookieText = (req, res, key) => {
  */
 exports.getCookieData = (req, cookieKey) => {
 	const cookie = req.cookies[cookieKey];
-	if (cookie) return JSON.parse(cookie);
+	if (cookie) {
+		return JSON.parse(cookie);
+	}
 	throw new Error("your time expired");
 };
 
