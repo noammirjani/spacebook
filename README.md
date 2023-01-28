@@ -57,14 +57,14 @@ npm install
     Home page Preview
 </p>
 </p>
-<img src="public/images/appPreview/signIn.jpeg">
+<img src="public/images/appPreview/signIn.png">
 </td> 
 <td width="50%">
 <br>
 <p align="center">
   Registration page Preview
 </p>
-<img src="public/images/appPreview/register.jpeg">  
+<img src="public/images/appPreview/register.png">  
 </td>
 </table>
 
@@ -77,14 +77,14 @@ npm install
     Home page Preview (Light mode)
 </p>
 </p>
-<img src="public/images/appPreview/lightMode.jpeg">
+<img src="public/images/appPreview/lightMode.png">
 </td> 
 <td width="50%">
 <br>
 <p align="center">
   Home page Preview (Dark mode)
 </p>
-<img src="public/images/appPreview/darkMode.jpeg">  
+<img src="public/images/appPreview/darkMode.png">  
 </td>
 </table>
 
@@ -97,13 +97,13 @@ npm install
   Card firt part
 </p>
 </p>
-<img src="public/images/appPreview/CardFirstPart.jpeg">  
+<img src="public/images/appPreview/CardFirstPart.png">  
 </td> 
 <td width="50%">
 <br>
 <p align="center">
   Card second part
 </p>
-<img src="public/images/appPreview/cardSecondPart.jpeg">  
+<img src="public/images/appPreview/cardSecondPart.png">  
 </td>
 </table>
