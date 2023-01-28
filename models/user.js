@@ -1,6 +1,7 @@
 'use strict';
 
 const {Model, Error} = require('sequelize');
+const Comment = require("./comment")
 const bcrypt = require('bcrypt');
 const ROUNDS = 10; //define the complexity of the encryption
 
@@ -19,6 +20,9 @@ module.exports = (sequelize, DataTypes) => {
          * @param {Object} models - The models object that contains all the defined models.
          */
         static associate(models) {
+            User.hasMany(models.Comment, {
+                foreignKey:'user_id'
+            });
         }
     }
 

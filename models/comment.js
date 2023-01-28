@@ -10,21 +10,13 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Comment.belongsTo(models.user,{
+        foreignKey: 'user_id'
+      });
     }
   }
   Comment.init({
-    date: {
-      type: DataTypes.STRING,
-      allowNull:false,
-      validate:{
-        isDate: true,
-      }
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull:false,
-    },
+    user_id:  DataTypes.INTEGER,
     text: {
       type: DataTypes.STRING,
       trim: true,
