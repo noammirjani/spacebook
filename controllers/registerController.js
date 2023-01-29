@@ -8,6 +8,7 @@ const COOKIE_ERROR = "error";
 const COOKIE_REGISTER = "register";
 const COOKIE_USER = "newUser";
 const COOKIE_MAX_AGE = 30 * 1000;
+const UNIQE_MAIL = "Email already exists";
 
 
 /**
@@ -45,11 +46,13 @@ exports.getRegisterPasswordsPage = (req, res) => {
  *  @param {string} [errMsg] - An optional error message to be displayed on the rendered page.
  */
 function checkTimeExpiredAndRender(req, res, errMsg = undefined) {
-	if (cookies.isCookieExists(req, COOKIE_USER)) renderRegisterPasswords(req, res, errMsg);
+	//if there is access but the email didnt caught by faster user
+	if (cookies.isCookieExists(req, COOKIE_USER) && errMsg !== UNIQE_MAIL)
+		renderRegisterPasswords(req, res, errMsg);
 	else {
 		if (cookies.isCookieExists(req, COOKIE_ERROR) || errMsg)
 			res.cookie(COOKIE_ERROR, "your time expired");
-		else res.redirect("/register");
+		res.redirect("/register");
 	}
 }
 
@@ -68,6 +71,7 @@ exports.userEnteredPasswords = (req, res) => {
 		checkTimeExpiredAndRender(req, res, "passwords do not match");
 	}
 };
+
 
 /**
  * enterRegisterPasswords - handle the post request for the register-passwords page.
@@ -88,9 +92,12 @@ exports.userBaseDataEntered = async (req, res) => {
 		res.redirect("/register/register-passwords");
 	}
 	catch (error) {
-		renderRegister(req, res, undefined, error.message);
+		if(access.SequelizeFatalError(error))
+			res.render('error', {title:"error - please try later"})
+		else renderRegister(req, res, undefined, error.message);
 	}
 };
+
 
 /**
  * setNewUserCookie - sets a new user cookie with the provided data

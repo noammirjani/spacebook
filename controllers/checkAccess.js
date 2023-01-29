@@ -25,6 +25,7 @@ exports.checkLogin = (req, res, next) => {
 	}
 };
 
+
 /**
  * Check if the user is logged out, if so, continue to the next middleware function.
  * If not, redirect to the homepage.
@@ -40,6 +41,7 @@ exports.checkLogout = (req, res, next) => {
 		next();
 	}
 };
+
 
 /**
  * Set the 'Cache-Control' header to prevent caching.

@@ -67,7 +67,6 @@ exports.enterHomePage = async (req, res) => {
 		res.redirect("/home");
 	}
 	catch (err) {
-		//   res.cookie(COOKIE_ERROR, error.message);
 		if(access.SequelizeFatalError(err))
 			res.render('error', {title:"error - please try later"})
 		else
