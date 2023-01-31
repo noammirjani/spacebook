@@ -62,14 +62,17 @@
 </table>
 
 
-<h2> Description 📚</h2>
+<h2> PLEASE NOTICE </h2>
 
 >   --------------
-> DO NOT RUN THE CODE FROM WWW -> IT OPENS ANOTHER DATA BASE FILE WITCH MAKES THE PROGRAM CONFUSED! OR OPPOSITE, MAKE SURE YOU ARE CREATING THE DATA BASE ONLY IN BIN FILE!
-> TO AVOID ANY PROBLEMS, I RECOMMEND TO ADD CONFIGURATION FILE BY YOURSELF bin\www AND THEN RUN THE CODE FROM WHATEVER FILE YOU WOULD LIKE, IT WONT DUPLICATE THE DATA DS,
-> FOR THE CONFIGURATION: THE PROGRAM FITS TO CHROME BROWSER!
+> RUN THE PROGRAM FROM WWW FILE ***ONLY IF*** YOU UPDATED THE CONFIGURATIONS OTHERWISE IT WILL DUPLICATE THE DATA DATA BASE AND IT WONT SUCCEED TO USE IT!
+> OTHER OPTION IS TO REMOVE THE ***LINE 55*** FROM DECONTAMINATION in file ***app.js***, THEN YOU CAN USE ANY FILE TO START FROM THE PROGRAM, BUT BE AWARE THAT IT WILL USE PORT 3000. 
+> I RECOMMEND TO ADD CONFIGURATION FILE BY YOURSELF bin\www AND CHOOSE CHROME BROWSER!
 > THANK YOU 
 >   --------------
+
+<h2> 📚 Description 📚</h2>
+
 > This code creates a login page and a page to view NASA's Astronomy Picture of the Day (APOD). The login page has a form for the user to enter their name, and it checks to make sure the name is a string of exactly 24 letters and digits. If the name is valid, the login page removes any error messages and submits the form. If the name is not valid, the login page displays an error message and highlights the input field as invalid. <br/>
 > The APOD page allows the user to choose a date and displays up to 2 APOD images for that date. It makes a fetch request to the NASA APOD API to get the data for the selected date, and it displays the images and associated information in the page. If there is an error in the fetch request, it displays an error message. The page also has a "Load More" button that allows the user to view additional images for the selected date.
 
