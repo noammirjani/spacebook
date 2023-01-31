@@ -1,6 +1,5 @@
 const db = require("../models");
 const cookies = require("./cookiesHandler");
-const Sequelize = require("sequelize");
 const access = require("./checkAccess");
 
 //const variables
@@ -8,7 +7,7 @@ const COOKIE_ERROR = "error";
 const COOKIE_REGISTER = "register";
 const COOKIE_USER = "newUser";
 const COOKIE_MAX_AGE = 30 * 1000;
-const UNIQE_MAIL = "Email already exists";
+const UNIQUE_MAIL = "Email already exists";
 
 
 /**
@@ -46,9 +45,15 @@ exports.getRegisterPasswordsPage = (req, res) => {
  *  @param {string} [errMsg] - An optional error message to be displayed on the rendered page.
  */
 function checkTimeExpiredAndRender(req, res, errMsg = undefined) {
-	//if there is access but the email didnt caught by faster user
-	if (cookies.isCookieExists(req, COOKIE_USER) && errMsg !== UNIQE_MAIL)
-		renderRegisterPasswords(req, res, errMsg);
+	//if there is access but the email didn't catch by faster user
+	if (cookies.isCookieExists(req, COOKIE_USER)){
+		if(errMsg !== UNIQUE_MAIL)
+			renderRegisterPasswords(req, res, errMsg);
+		else {
+			res.cookie(COOKIE_ERROR, UNIQUE_MAIL);
+			res.redirect("/register");
+		}
+	}
 	else {
 		if (cookies.isCookieExists(req, COOKIE_ERROR) || errMsg)
 			res.cookie(COOKIE_ERROR, "your time expired");
@@ -63,7 +68,7 @@ function checkTimeExpiredAndRender(req, res, errMsg = undefined) {
  * @param {Object} res - Express response object
  */
 exports.userEnteredPasswords = (req, res) => {
-	const { password, confirmPassword } = req.body;
+	const {password, confirmPassword} = req.body;
 
 	if (password === confirmPassword) {
 		registerNewUser(password, req, res).then();
@@ -79,11 +84,11 @@ exports.userEnteredPasswords = (req, res) => {
  * @param {Object} res - Express response object
  */
 exports.userBaseDataEntered = async (req, res) => {
-	let { email, firstName, lastName } = req.body;
-
 	try {
-		const emailExists = await db.User.findOne({ where: { email: email.toLowerCase() } });
+		let { email, firstName, lastName } = getDataFromRequest(req);
+		//access.SequelizeUsersTableValidAccess();
 
+		const emailExists = await db.User.findOne({ where: { email: email.toLowerCase() } });
 		if (emailExists) {
 			throw new Error("Email already in use");
 		}
@@ -92,11 +97,24 @@ exports.userBaseDataEntered = async (req, res) => {
 		res.redirect("/register/register-passwords");
 	}
 	catch (error) {
-		if(access.SequelizeFatalError(error))
-			res.render('error', {title:"error - please try later"})
-		else renderRegister(req, res, undefined, error.message);
+		renderRegister(req, res, undefined, access.SequelizeFatalError(error) || error.message);
 	}
 };
+
+
+/**
+ * getDataFromRequest -get data from the body request, trim the data.
+ * @param {Object} req - Express request object
+ */
+function getDataFromRequest(req){
+	let { email, firstName, lastName } = req.body;
+
+	email = email.trim();
+	firstName = firstName.trim();
+	lastName = lastName.trim();
+
+	return {email, firstName, lastName };
+}
 
 
 /**
@@ -108,6 +126,7 @@ exports.userBaseDataEntered = async (req, res) => {
 const setNewUserCookie = (req, res, data) => {
 	res.cookie(COOKIE_USER, JSON.stringify(data), { maxAge: COOKIE_MAX_AGE });
 };
+
 
 /**
  * createUser - enters a new user to the database
@@ -128,10 +147,9 @@ const createUser = async (firstName, lastName, email, password, res) => {
 		res.clearCookie(COOKIE_USER);
 	}
 	catch (error) {
-		if(access.SequelizeFatalError(error))
-			res.render('error', {title:"error - please try later"})
-		else if (error instanceof Sequelize.ValidationError) throw error;
-		else res.render("error", { error: error.msg });
+		//update the error msg, if its equalized validation, security or other
+		error.message = access.SequelizeFatalError(error) || error.message;
+		throw error;
 	}
 };
 
@@ -149,9 +167,7 @@ const registerNewUser = async (password, req, res) => {
 		res.redirect("/");
 	}
 	catch (error) {
-		if(access.SequelizeFatalError(error))
-			res.render('error', {title:"error - please try later"})
-		else checkTimeExpiredAndRender(req, res, error.message);
+		checkTimeExpiredAndRender(req, res, error.message);
 	}
 };
 
@@ -162,6 +178,7 @@ const registerNewUser = async (password, req, res) => {
  * @param {Object} res - Express response object
  * @param {Object} req - Express response object
  * @param {User} userObj - User object
+ * @param errMsg
  */
 function renderRegister(req, res, userObj = undefined, errMsg = undefined) {
 	if (errMsg) cookies.clear(req, res, COOKIE_ERROR);
@@ -179,6 +196,7 @@ function renderRegister(req, res, userObj = undefined, errMsg = undefined) {
  * renderRegisterPasswords - displays the register-passwords page.
  * @param {Object} res - Express response object
  * @param {Object} req - Express response object
+ * @param errMsg
  */
 function renderRegisterPasswords(req, res, errMsg = undefined) {
 	if (errMsg) {

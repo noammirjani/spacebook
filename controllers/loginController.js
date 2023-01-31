@@ -57,6 +57,7 @@ exports.enterHomePage = async (req, res) => {
 			throw new Error("SORRY - data was not found, try again");
 		}
 
+	//	access.SequelizeUsersTableValidAccess();
 		const user = await db.User.findOne({ where: { email } });
 		if (!user) {
 			throw new Error("email is not found, please register");
@@ -67,9 +68,7 @@ exports.enterHomePage = async (req, res) => {
 		res.redirect("/home");
 	}
 	catch (err) {
-		if(access.SequelizeFatalError(err))
-			res.render('error', {title:"error - please try later"})
-		else
-			renderLoginPage(req, res, err.message);
+		err.message = access.SequelizeFatalError(err) || err.message;
+		renderLoginPage(req, res, err.message);
 	}
 };

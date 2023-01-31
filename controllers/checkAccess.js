@@ -1,4 +1,7 @@
 const {Sequelize} = require("sequelize");
+const db = require("../models");
+const SERVER_ERROR='OOPS ACTION FAILED \n SOMETHING HAPPENED TO DATA BASE, \n SERVER IS OFF FOR NOW';
+
 /**
  * Check if the user is logged in, if so, continue to the next middleware function.
  * If not, render the login page with an error message.
@@ -19,8 +22,8 @@ exports.checkLogin = (req, res, next) => {
 				newRegistered: "",
 			});
 		} else {
-			text = { msg: "server is down, try again later" };
-			res.status(401).json(text);
+			let responseText = { msg: "server is down, try again later" };
+			res.status(401).json(responseText);
 		}
 	}
 };
@@ -59,11 +62,32 @@ exports.nocache = (req, res, next) => {
 /** 'SequelizeFatalError'
  * @function
  * @param {Object} err
- * @return {boolean}
+ * @return {string}
  */
 exports.SequelizeFatalError = (err) => {
-	if( err instanceof Sequelize.DatabaseError   ||
-		err instanceof Sequelize.ConnectionError)
-		return true;
-	return false;
+	if (err instanceof Sequelize.DatabaseError ||
+		err instanceof Sequelize.ConnectionError) {
+		return SERVER_ERROR;
+	}
+	return "";
+};
+
+
+/** 'SequelizeUsersTableValidAccess' - checks if the table  */
+exports.SequelizeUsersTableValidAccess = () => {
+	db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Users'", (err, row) => {
+		if (err || !row) {
+			throw new Error('users database is down for now');
+		}
+	});
+}
+
+
+/** 'SequelizeCommentsTableValidAccess' - checks if the table  */
+exports.SequelizeCommentsTableValidAccess = () => {
+	db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Comments'", (err, row) => {
+		if (err || !row) {
+			throw new Erorr('comments database is down for now');
+		}
+	});
 }

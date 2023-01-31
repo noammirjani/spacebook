@@ -4,6 +4,7 @@ let cookieParser = require('cookie-parser');
 let logger       = require('morgan');
 const session    = require('express-session');
 let access       = require('./controllers/checkAccess');
+const fs         = require('fs');
 
 
 let registerRouter = require('./routes/registerRoute'); //register
@@ -40,14 +41,15 @@ app.use('/register', access.checkLogout, registerRouter);
 app.use('/login',access.checkLogout, loginRouter);
 
 
-// error handler
-// app.use(function (err, req, res) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-//
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
+//error handler
+app.use(function (req, res, next, err) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.title = "error! BAD URL!";
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  res.status(err.status || 500);
+  res.render('error');
+});
 
 module.exports = app;

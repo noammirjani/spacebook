@@ -12,7 +12,6 @@
 <p align="center">
     Home page Preview
 </p>
-</p>
 <img src="public/images/appPreview/signIn.png">
 </td> 
 <td width="50%">
@@ -32,7 +31,6 @@
 <p align="center">
     Home page Preview (Light mode)
 </p>
-</p>
 <img src="public/images/appPreview/lightMode.png">
 </td> 
 <td width="50%">
@@ -50,8 +48,7 @@
 &nbsp; 
 <br>
 <p align="center">
-  Card firt part
-</p>
+  Card first part
 </p>
 <img src="public/images/appPreview/CardFirstPart.png">  
 </td> 
@@ -77,7 +74,7 @@
 > <br><br>
 > To use this code, open the index.html file in a web browser. Enter your name in the login form and click the "Submit" button. If your name is a string of exactly 24 letters and digits, you will be taken to the APOD page. Select a date from the dropdown menu and click the "Go" button to view the APOD images for that date. You can click the "Load More" button to view additional images for the selected date.
 
-<h2> Algorightem - Polling Algorightem </h2>
+<h2> Algorithm - Polling Comments </h2>
 
 > <p>The api module in "controllers" exports several functions as API endpoints for a comments service.
 > The first function, "getComments", is an API endpoint that retrieves comments from a database based on a date query parameter passed in the request. It uses the "findAll" method from the "sequelize" library to query the "Comment" model in the database, using the date as the filter. <br/> The second function, "postComment" is an API endpoint that creates a new comment in the database. It retrieves date, text, and email from the request body and uses the "create" method from the "sequelize" library to insert a new row into the "Comment" model in the database. <br/> The third function, "deleteComment" is an API endpoint that deletes a comment from the database. It retrieves the id, text, and date of the comment from the request body and uses the "findOne" method from the "sequelize" library to retrieve the comment from the database. It then uses the "destroy" method to delete the comment. <br/> The fourth function, "pollComments" is an API endpoint that retrieves comments that have been modified since the last time the endpoint was polled. It uses the "findAll" method from the "sequelize" library to retrieve comments that have an updatedAt timestamp greater than the time passed in the request query and filters the comments by date and email. It then returns an object containing the comments, update time, and the number of updates. <br/> The fifth function, "getApp" is an API endpoint that handles a GET request for the login page. </p>
@@ -94,7 +91,7 @@
 
 > This code is available under the MIT License.
 
-<h1 align="center">Usage<h1>
+<h1 align="center">Usage</h1>
 <h2 align="center">Cloning the repository</h2>
 
 #### Clone the repository using the command below
@@ -114,4 +111,12 @@ cd ex6-express-neviiim-ex6_noam_mirjani
 
 ```bash
 npm install
+```
+
+```bash
+ npm install express 
+```
+
+```bash
+node_modules/.bin/sequelize db:migrate
 ```

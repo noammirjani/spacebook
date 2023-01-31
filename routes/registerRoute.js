@@ -19,6 +19,7 @@ router.get("/", registerController.enterToRegisterPage);
  * @param {Object} res - Express response object
  */
 router.get("/register-passwords", registerController.getRegisterPasswordsPage);
+router.get("/user-password", registerController.getRegisterPasswordsPage);
 
 
 /* POST */

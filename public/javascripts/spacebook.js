@@ -614,9 +614,11 @@
      * getCommentDeleteData: function(number): Object, printComments: function(Array): void}
      */
     const comments = (function () {
+        let lastPollTimestamp = date.currTime();
         let currImgDate = null;
         const maxChars = 128;
         const sendComment = 13;
+
         /**
          * Initialize the modal with the current image element and set the title,
          * clear the comment text box and get the comments for the current image.
@@ -678,7 +680,7 @@
             listComments.forEach((comment) => {
                 const {col1, col2} = commentsCreate.cols(row);
 
-                col1.appendChild(commentsCreate.card(`${comment.User.firstName} ${comment.User.lastName}`, comment.text, comment.id));
+                col1.appendChild(commentsCreate.card(`${comment.User.firstName} ${comment.User.lastName}`, comment.text));
 
                 if (comment.user_id === selectors.userId) {
                     col2.appendChild(commentsCreate.deleteIcon(comment.id, comment.text, deleteComment));

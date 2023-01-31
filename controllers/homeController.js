@@ -2,6 +2,7 @@ const db = require("../models");
 const {Op} = require("sequelize");
 const access =  require("./checkAccess");
 
+
 /**
  * Returns an array of comments based on the specified date
  * @async
@@ -69,20 +70,30 @@ exports.deleteComment = async (req, res) => {
 
 
 /**
- * catch the api errors and handle them
+ * catch the api errors and handle them - use try & catch cause there showed some throws error in the response because overwhelmed requests
  * @function
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Object} error
- * @param {Object} str
+ * @param constErrorMsg
  */
-function catchError(req,res,error, str="wanted mission failed"){
-	if(access.SequelizeFatalError(error)){
-		req.session.isLoggedIn = false;
-		res.locals.cookies.title = "error - please try later";
-		res.redirected('error');
+function catchError(req,res,error, constErrorMsg="wanted mission failed"){
+	try {
+		if (res.headersSent) return;
+
+		const errorMsg = access.SequelizeFatalError(error) || constErrorMsg || error.message;
+
+		res.status(404).json({
+				code: 404,
+				msg: errorMsg
+			}).end();
 	}
-	else res.status(500).json({code:401, msg: str || error.message});
+	catch{
+		res.status(400).json({
+				code: 400,
+				msg: "To many requests"
+			}).end();
+	}
 }
 
 
@@ -116,10 +127,13 @@ async function getUpdates(time,date,user){
  * @returns {Promise<Array>} - A promise that resolves to an array of comments that match the specified criteria
  */
 async function getCommentsByDate(date){
-	const temp =  await db.Comments.findAll({ where: { date },
-		include: [{model: db.User, attributes:['firstName', 'lastName']}]
+
+	//access.SequelizeCommentsTableValidAccess;
+
+	return await db.Comments.findAll({
+		where: {date},
+		include: [{model: db.User, attributes: ['firstName', 'lastName']}]
 	});
-	return temp;
 }
 
 
@@ -143,7 +157,6 @@ function sendPollResponse(res, code, isUpdate, comments, updateTime, modifyCount
 }
 
 
-
 /**
  * Polls comments and returns an array of comments that were modified since the last poll
  * @async
@@ -163,20 +176,10 @@ exports.pollComments = async (req, res) => {
 		if (modify.length > 0) {
 			const comments = await getCommentsByDate(date)
 			newTime = new Date().toUTCString().replace(/\([^()]*\)/g, "")
-		//	sendPollResponse(res, 200, true,comments, newTime, modify.length)
-			res.status(200).json({
-				isUpdate: true,
-				comments: comments,
-				updateTime: newTime,
-				amount: modify.length,
-			});
-		} else // sendPollResponse(res,203, false,[], time, modify.length)
-			res.status(203).json({
-				isUpdate: false,
-				comments: [],
-				updateTime: time,
-				amount: 0,
-			});
+			sendPollResponse(res, 200, true,comments, newTime, modify.length)
+		} 
+		else sendPollResponse(res,203, false,[], time, modify.length)
+		
 	} catch (error) {
 		catchError(req,res, error);
 	}
@@ -196,6 +199,7 @@ exports.getApp = (req, res) => {
 		email: req.session.email,
 	});
 };
+
 
 /**
  * Logs the user out of the application
