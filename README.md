@@ -1,131 +1,150 @@
-# ⭐️⭐️⭐️ EX6 - SPACEBOOK 🌎 🌍 🌏
+# <span style="color: #9AC1D1;">SpaceBook - Explore the Cosmos</span>
 
-<h1>Noam Mirjani <br> id: 315216515 <br> Email: Noammir@edu.hac.ac.il</h1>
+## Overview
+SpaceBook is a dynamic web application offering a seamless connection to NASA's Astronomy Picture of the Day (APOD). It intertwines celestial wonders captured by NASA with a secure login interface, providing a rich and engaging user experience.
 
+## Table of Contents
 
-<h1 align="center">App Preview</h1>
+1. [App Previews](#app-previews)
+2. [Important Notes](#important-notes)
+3. [Description](#description)
+4. [Installation](#installation)
+5. [Usage](#usage)
+6. [Algorithm - Polling Comments](#algorithm---polling-comments)
+7. [Credits](#credits)
+8. [License](#license)
+
+## App Previews
 <table width="100%"> 
-<tr>
-<td width="50%">      
-&nbsp; 
-<br>
-<p align="center">
-    Home page Preview
-</p>
-<img src="public/images/appPreview/signIn.png">
-</td> 
-<td width="50%">
-<br>
-<p align="center">
-  Registration page Preview
-</p>
-<img src="public/images/appPreview/register.png">  
-</td>
+  <tr>
+    <td width="50%">
+      <div align="center">
+        <p style="font-family: 'Arial', sans-serif; font-size: 20px; font-weight: bold;">Landing page Preview - Login</p>
+        <img src="public/images/appPreview/signIn.png" width="300" height="300">
+      </div>
+    </td> 
+    <td width="50%">
+      <div align="center">
+        <p style="font-family: 'Arial', sans-serif; font-size: 20px; font-weight: bold;">Registration page Preview</p>
+        <img src="public/images/appPreview/register.png" width="300" height="300">
+      </div>
+    </td>
+  </tr>
 </table>
 
 <table width="100%"> 
-<tr>
-<td width="50%">      
-&nbsp; 
-<br>
-<p align="center">
-    Home page Preview (Light mode)
-</p>
-<img src="public/images/appPreview/lightMode.png">
-</td> 
-<td width="50%">
-<br>
-<p align="center">
-  Home page Preview (Dark mode)
-</p>
-<img src="public/images/appPreview/darkMode.png">  
-</td>
+  <tr>
+    <td width="50%">
+      <div align="center">
+        <p style="font-family: 'Arial', sans-serif; font-size: 20px; font-weight: bold"> Home page Preview (Light mode)</p>
+        <img src="public/images/appPreview/lightMode.png" width="300" height="300">
+      </div>
+    </td> 
+    <td width="50%">
+      <div align="center">
+        <p style="font-family: 'Arial', sans-serif; font-size: 20px; font-weight: bold"> Home page Preview (Dark mode)</p>
+        <img src="public/images/appPreview/darkMode.png" width="300" height="300">
+      </div>
+    </td>
+  </tr>
 </table>
 
 <table width="100%"> 
-<tr>
-<td width="50%">      
-&nbsp; 
-<br>
-<p align="center">
-  Card first part
-</p>
-<img src="public/images/appPreview/CardFirstPart.png">  
-</td> 
-<td width="50%">
-<br>
-<p align="center">
-  Card second part
-</p>
-<img src="public/images/appPreview/cardSecondPart.png">  
-</td>
+  <tr>
+    <td width="50%">
+      <div align="center">
+        <p style="font-family: 'Arial', sans-serif; font-size: 20px; font-weight: bold">Card first part</p>
+        <img src="public/images/appPreview/CardFirstPart.png" width="300" height="300">
+      </div>
+    </td> 
+    <td width="50%">
+      <div align="center">
+        <p style="font-family: 'Arial', sans-serif; font-size: 20px; font-weight: bold">Card second part</p>
+        <img src="public/images/appPreview/cardSecondPart.png" width="300" height="300">
+      </div>
+    </td>
+  </tr>
 </table>
 
+## Important Notes
 
-<h2> PLEASE NOTICE </h2>
 
->   --------------
-> RUN THE PROGRAM FROM WWW FILE ***ONLY IF*** YOU UPDATED THE CONFIGURATIONS OTHERWISE IT WILL DUPLICATE THE DATA DATA BASE AND IT WONT SUCCEED TO USE IT!
-> OTHER OPTION IS TO REMOVE THE ***LINE 55*** FROM DECONTAMINATION in file ***app.js***, THEN YOU CAN USE ANY FILE TO START FROM THE PROGRAM, BUT BE AWARE THAT IT WILL USE PORT 3000. 
-> I RECOMMEND TO ADD CONFIGURATION FILE BY YOURSELF bin\www AND CHOOSE CHROME BROWSER!
-> THANK YOU 
->   --------------
+### <span style="color: #069DCA;">Configurations</span>
+Before running the program, ensure the following configuration is in place:
 
-<h2> 📚 Description 📚</h2>
+- **API Key**: 
+  * Obtain an API key from [NASA's APOD API](https://api.nasa.gov) [here](https://api.nasa.gov) 
+  * replace `const APIKEY = "***";` in the file `public/javascripts/spacebook.js` at line 2 with your generated API key.
 
-> This code creates a login page and a page to view NASA's Astronomy Picture of the Day (APOD). The login page has a form for the user to enter their name, and it checks to make sure the name is a string of exactly 24 letters and digits. If the name is valid, the login page removes any error messages and submits the form. If the name is not valid, the login page displays an error message and highlights the input field as invalid. <br/>
-> The APOD page allows the user to choose a date and displays up to 2 APOD images for that date. It makes a fetch request to the NASA APOD API to get the data for the selected date, and it displays the images and associated information in the page. If there is an error in the fetch request, it displays an error message. The page also has a "Load More" button that allows the user to view additional images for the selected date.
 
-<h2> Installation 🛠️</h2>
+### <span style="color: #069DCA;">Startup</span>
 
-> To run this code, you will need an API key from NASA's APOD API. You can get a key by following the instructions here. Once you have your API key, replace YOUR_API_KEY_HERE in the following line of code with your actual API key:<br><br>
-> const APIKEY = "YOUR_API_KEY_HERE"; (ex5.js line-1)
-> <br><br>
-> To use this code, open the index.html file in a web browser. Enter your name in the login form and click the "Submit" button. If your name is a string of exactly 24 letters and digits, you will be taken to the APOD page. Select a date from the dropdown menu and click the "Go" button to view the APOD images for that date. You can click the "Load More" button to view additional images for the selected date.
+To seamlessly initiate the program, follow these steps:
 
-<h2> Algorithm - Polling Comments </h2>
+1. **Install Dependencies**: Run the following commands in the project directory:
+    ```bash
+    npm install
+    npm install express
+    ```
+2. **Database Migration**: Migrate the database schema by running:
+    ```bash
+    node_modules/.bin/sequelize db:migrate
+    ```
+3. **Run the Application**: Start the application using either of these commands:
+    ```bash
+    node app.js
+    npm start
+    ```
 
-> <p>The api module in "controllers" exports several functions as API endpoints for a comments service.
-> The first function, "getComments", is an API endpoint that retrieves comments from a database based on a date query parameter passed in the request. It uses the "findAll" method from the "sequelize" library to query the "Comment" model in the database, using the date as the filter. <br/> The second function, "postComment" is an API endpoint that creates a new comment in the database. It retrieves date, text, and email from the request body and uses the "create" method from the "sequelize" library to insert a new row into the "Comment" model in the database. <br/> The third function, "deleteComment" is an API endpoint that deletes a comment from the database. It retrieves the id, text, and date of the comment from the request body and uses the "findOne" method from the "sequelize" library to retrieve the comment from the database. It then uses the "destroy" method to delete the comment. <br/> The fourth function, "pollComments" is an API endpoint that retrieves comments that have been modified since the last time the endpoint was polled. It uses the "findAll" method from the "sequelize" library to retrieve comments that have an updatedAt timestamp greater than the time passed in the request query and filters the comments by date and email. It then returns an object containing the comments, update time, and the number of updates. <br/> The fifth function, "getApp" is an API endpoint that handles a GET request for the login page. </p>
+### Recommended Setup
 
-<h2> Credits🎗 </h2>
+For an optimal setup experience, consider the following suggestions:
 
-> This code was developed using the NASA APOD API.
+- **Browser Compatibility**: Use the latest Chrome or Firefox versions for seamless functionality.
+- **Configuration File**: Create a configuration file (e.g., `bin/www`) to customize settings like port allocation and environment variables.
+- **Code Editor**: Utilize a code editor supporting JavaScript/Node.js development, such as Visual Studio Code or Atom.
 
-<h2> Light & Dark Mode </h2>
+## Description
 
-> The application offers users the ability to switch between a light and dark mode, allowing them to choose the display setting that is most comfortable for their eyes and preferred viewing experience. This feature is designed to make the application more user-friendly and accessible for everyone. Whether you prefer a bright, vibrant display or a darker, more subdued look, the application's light and dark mode options provide the flexibility to customize your experience.
+SpaceBook facilitates a secure login process for users to access NASA's APOD content. 
+Ensures data integrity by validating user input.
 
-<h2> License </h2>
+The APOD section provides a curated view of celestial images with associated information. Error handling and a user-friendly "Load More" feature enrich the browsing experience.
 
-> This code is available under the MIT License.
+## Usage
 
-<h1 align="center">Usage</h1>
-<h2 align="center">Cloning the repository</h2>
+### How to Utilize the Application
 
-#### Clone the repository using the command below
+To effectively use the application, follow these steps:
 
-```bash
-git clone https://github.com/Solange-s-Courses/ex6-express-neviiim-ex6_noam_mirjani.git
+1. **Login**: Access the login page and enter your credentials (username, password, etc.) to authenticate and gain access to the application features.
+2. **Explore APOD**: Navigate to the Astronomy Picture of the Day (APOD) section to view celestial images and associated information after logging in.
+3. **Date Selection**: Utilize the date picker or input field to select specific dates for viewing APOD images.
+4. **Load More**: Use the "Load More" button to fetch additional images or content for the selected date.
+5. **Interaction**: Explore various functionalities like commenting, sharing, or saving favorite images, if available.
 
-```
 
-#### Move into the directory where we have the project files
+## Algorithm - Comment Management and Polling
 
-```bash
-cd ex6-express-neviiim-ex6_noam_mirjani
-```
+- Data Retrieval and Deletion: The system employs robust mechanisms to handle comment retrieval and deletion, accommodating user interactions and system requirements. Functions are specifically designed to fetch comments based on timestamps, delete specific comments, and retrieve modified comments since the last polling. Notably, the deletion mechanism in Sequelize adheres to a safe deletion approach, known as "paranoid mode." This mode enables logical deletion of records, preserving them in the database without physical removal.
 
-#### Run npm install to install and dependence's
+- Polling Mechanism: The application incorporates a polling mechanism to track modifications in comments since the last poll. This functionality relies on a dedicated function that compares timestamps, enabling the retrieval of comments updated after a specific time.
 
-```bash
-npm install
-```
 
-```bash
- npm install express 
-```
 
-```bash
-node_modules/.bin/sequelize db:migrate
-```
+## Credits
+
+### Acknowledgment and Credits
+
+Acknowledgment to external resources, APIs, and contributors:
+
+- **APIs Used**: The project extends gratitude to NASA's APOD API and any other external APIs that have been integrated into the application for their invaluable resources and data.
+- **Individual Contribution***: The development of this project was solely conducted by an individual contributor. No team members were involved in this project's creation.
+- **Technologies and Frameworks**: The project leverages several technologies and frameworks, including JavaScript (JS), Node.js, Express, CSS, Bootstrap 5.3, and Sequelize, which have been instrumental in building this application.
+- **Database Visualization Tool**: For debugging and visualizing the database, it is recommended to use "DB Browser for SQLite." This tool provides an intuitive interface to inspect the database structure and contents, aiding in debugging and analysis.
+
+*Note: This application follows an MVC (Model-View-Controller) architecture, which organizes the codebase into distinct sections handling data (Model), presentation (View), and application logic (Controller).*
+
+## License
+
+This project operates under the MIT License.
