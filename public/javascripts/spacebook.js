@@ -1,5 +1,5 @@
 (function () {
-    const APIKEY = "cosjA0DN7IKcSttpfkp0CmPqIUX8M3eOt88kQPBJ";
+    const APIKEY = ""; // add you api key from https://api.nasa.gov
 
     /**
      *A module for handling fetch functionality.
